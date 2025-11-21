@@ -1,0 +1,375 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Branch {
+  id        String     @id @default(cuid())
+  name      String
+  code      String     @unique
+  address   String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  employees Employee[]
+  orders    Order[]
+  users     User[]
+  machines  Machine[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(OPERATOR)
+  branchId   String?
+  employeeId String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  branch     Branch?  @relation(fields: [branchId], references: [id])
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  stockTransactions StockTransaction[]
+}
+
+model Employee {
+  id             String            @id @default(cuid())
+  name           String
+  designation    String
+  phone          String?
+  gpsCoordinates String?
+  branchId       String
+  department     String?           // Department/Phase (e.g., "CUTTING", "WELDING")
+  assignedStages ProductionStage[] // Stages this operator can work on
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  attendance     Attendance[]
+  branch         Branch            @relation(fields: [branchId], references: [id])
+  productionLogs ProductionLog[]
+  user           User?
+  breaks         Break[]
+  leaveRequests  LeaveRequest[]
+  wastageLogs    WastageLog[]
+  machineReports MachineStatus[]   @relation("MachineReporter")
+  machineResolved MachineStatus[]  @relation("MachineResolver")
+  productionEntries ProductionEntry[] @relation("ProductionOperator")
+  approvedProductions ProductionEntry[] @relation("ProductionApprover")
+  materialConsumptions MaterialConsumption[] @relation("MaterialConsumer")
+}
+
+model Attendance {
+  id         String    @id @default(cuid())
+  employeeId String
+  date       DateTime  @default(now())
+  checkIn    DateTime
+  checkOut   DateTime?
+  location   String?
+  status     String    @default("PRESENT")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  employee   Employee  @relation(fields: [employeeId], references: [id])
+}
+
+model Order {
+  id              String          @id @default(cuid())
+  orderNumber     String          @unique
+  customerName    String
+  customerPhone   String?
+  customerAddress String?
+  status          OrderStatus     @default(PENDING)
+  currentStage    ProductionStage @default(PENDING)
+  branchId        String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  invoices        Invoice[]
+  branch          Branch?         @relation(fields: [branchId], references: [id])
+  items           OrderItem[]
+  productionLogs  ProductionLog[]
+  wastageLogs     WastageLog[]
+  productionEntries ProductionEntry[]
+  materialConsumptions MaterialConsumption[]
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  productName String
+  quantity    Int
+  dimensions  String?
+  material    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  order       Order    @relation(fields: [orderId], references: [id])
+}
+
+model ProductionLog {
+  id         String          @id @default(cuid())
+  orderId    String
+  stage      ProductionStage
+  status     String
+  employeeId String?
+  notes      String?
+  timestamp  DateTime        @default(now())
+  employee   Employee?       @relation(fields: [employeeId], references: [id])
+  order      Order           @relation(fields: [orderId], references: [id])
+}
+
+model Invoice {
+  id          String   @id @default(cuid())
+  invoiceNo   String   @unique
+  orderId     String
+  amount      Float
+  gstAmount   Float    @default(0)
+  isGst       Boolean  @default(false)
+  status      String
+  generatedAt DateTime @default(now())
+  order       Order    @relation(fields: [orderId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  BRANCH_MANAGER
+  PRODUCTION_SUPERVISOR
+  OPERATOR
+  ORDER_TAKER
+  ACCOUNTANT
+}
+
+enum ProductionStage {
+  PENDING
+  CUTTING
+  SHAPING
+  BENDING
+  WELDING_INNER
+  WELDING_OUTER
+  GRINDING
+  FINISHING
+  PAINTING
+  COMPLETED
+}
+
+enum OrderStatus {
+  PENDING
+  APPROVED
+  IN_PRODUCTION
+  COMPLETED
+  DELIVERED
+  CANCELLED
+}
+
+model InventoryItem {
+  id                String              @id @default(cuid())
+  name              String
+  sku               String              @unique
+  category          String
+  quantity          Float
+  unit              String
+  reorderLevel      Float?
+  price             Float?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  stockTransactions StockTransaction[]
+  materialConsumptions MaterialConsumption[]
+}
+
+model StockTransaction {
+  id        String        @id @default(cuid())
+  itemId    String
+  quantity  Float
+  type      StockTxType
+  userId    String
+  timestamp DateTime      @default(now())
+  item      InventoryItem @relation(fields: [itemId], references: [id])
+  user      User          @relation(fields: [userId], references: [id])
+}
+
+enum StockTxType {
+  IN
+  OUT
+  ADJUSTMENT
+}
+
+model Break {
+  id         String    @id @default(cuid())
+  employeeId String
+  startTime  DateTime  @default(now())
+  endTime    DateTime?
+  duration   Int?      // in minutes
+  reason     String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  employee   Employee  @relation(fields: [employeeId], references: [id])
+}
+
+model LeaveRequest {
+  id         String      @id @default(cuid())
+  employeeId String
+  leaveType  LeaveType
+  startDate  DateTime
+  endDate    DateTime
+  reason     String
+  status     LeaveStatus @default(PENDING)
+  approvedBy String?
+  approvedAt DateTime?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  employee   Employee    @relation(fields: [employeeId], references: [id])
+}
+
+enum LeaveType {
+  CASUAL
+  SICK
+  EARNED
+  UNPAID
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model WastageLog {
+  id           String          @id @default(cuid())
+  employeeId   String
+  orderId      String?
+  materialName String
+  quantity     Float
+  unit         String
+  reason       String
+  stage        ProductionStage
+  photoUrl     String?
+  timestamp    DateTime        @default(now())
+  employee     Employee        @relation(fields: [employeeId], references: [id])
+  order        Order?          @relation(fields: [orderId], references: [id])
+}
+
+model MachineStatus {
+  id          String       @id @default(cuid())
+  machineId   String?      // Link to Machine model (optional for backward compatibility)
+  machineName String       // Keep for legacy/manual entries
+  status      MachineState @default(OPERATIONAL)
+  issue       String?
+  priority    Priority     @default(MEDIUM)
+  reportedBy  String
+  resolvedBy  String?
+  reportedAt  DateTime     @default(now())
+  resolvedAt  DateTime?
+  stage       ProductionStage
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  machine     Machine?     @relation("MachineMaster", fields: [machineId], references: [id])
+  reporter    Employee     @relation("MachineReporter", fields: [reportedBy], references: [id])
+  resolver    Employee?    @relation("MachineResolver", fields: [resolvedBy], references: [id])
+}
+
+enum MachineState {
+  OPERATIONAL
+  STUCK
+  MAINTENANCE
+  BREAKDOWN
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum MaterialType {
+  MS_SHEET
+  HANDLE
+  HINGE
+  FLAP_DISC
+  CO2_GAS
+  WELDING_WIRE
+  BACK_PATTI
+  LOCK
+  LOCK_CLIP
+  PATLA
+  L_PATTI
+  PAINT
+  POWDER
+  OTHER
+}
+
+// Machine Master - Tracks all machines in the factory
+model Machine {
+  id              String            @id @default(cuid())
+  name            String            // "Cutting Machine", "Power Press", etc.
+  code            String            @unique // "CUT-01", "PP-01", etc.
+  stage           ProductionStage   // Which production stage this machine belongs to
+  capacity        Int?              // Units per hour (optional)
+  branchId        String
+  isActive        Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  branch          Branch            @relation(fields: [branchId], references: [id])
+  productionEntries ProductionEntry[]
+  machineStatuses MachineStatus[]   @relation("MachineMaster")
+}
+
+// Production Entry - Tracks operator production on each machine
+model ProductionEntry {
+  id                String          @id @default(cuid())
+  orderId           String
+  machineId         String
+  operatorId        String
+  stage             ProductionStage
+  
+  // Input/Output tracking
+  inputQuantity     Int             // Units received from previous stage
+  outputQuantity    Int             // Units successfully produced
+  rejectedQuantity  Int             @default(0) // Defective units
+  wastageQuantity   Float           @default(0) // Scrap/wastage
+  wastagePercentage Float?          // Auto-calculated wastage %
+  
+  // Time tracking
+  startTime         DateTime        @default(now())
+  endTime           DateTime?
+  duration          Int?            // Minutes (auto-calculated)
+  
+  // Material consumption (JSON array of {materialId, quantity, unit})
+  materialsUsed     Json?
+  
+  // Quality
+  qualityNotes      String?
+  qualityApproved   Boolean         @default(false)
+  approvedBy        String?         // Supervisor employee ID
+  approvedAt        DateTime?
+  
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  order             Order           @relation(fields: [orderId], references: [id])
+  machine           Machine         @relation(fields: [machineId], references: [id])
+  operator          Employee        @relation("ProductionOperator", fields: [operatorId], references: [id])
+  approver          Employee?       @relation("ProductionApprover", fields: [approvedBy], references: [id])
+  materialConsumptions MaterialConsumption[]
+}
+
+// Material Consumption - Detailed tracking of materials used
+model MaterialConsumption {
+  id                String          @id @default(cuid())
+  productionEntryId String?
+  orderId           String
+  materialId        String          // Links to InventoryItem
+  materialType      MaterialType
+  quantity          Float
+  unit              String
+  stage             ProductionStage
+  consumedBy        String          // Employee ID
+  consumedAt        DateTime        @default(now())
+  notes             String?
+  
+  order             Order           @relation(fields: [orderId], references: [id])
+  material          InventoryItem   @relation(fields: [materialId], references: [id])
+  employee          Employee        @relation("MaterialConsumer", fields: [consumedBy], references: [id])
+  productionEntry   ProductionEntry? @relation(fields: [productionEntryId], references: [id])
+}
