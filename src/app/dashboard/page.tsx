@@ -55,95 +55,117 @@ async function getDashboardStats() {
 }
 
 const statusColors: Record<string, string> = {
-    PENDING: "bg-yellow-100 text-yellow-800",
-    APPROVED: "bg-blue-100 text-blue-800",
-    IN_PRODUCTION: "bg-purple-100 text-purple-800",
-    COMPLETED: "bg-green-100 text-green-800",
-    DELIVERED: "bg-teal-100 text-teal-800",
-    CANCELLED: "bg-red-100 text-red-800",
+    PENDING: "bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 text-yellow-700 border border-yellow-500/20",
+    APPROVED: "bg-gradient-to-r from-blue-500/10 to-blue-600/10 text-blue-700 border border-blue-500/20",
+    IN_PRODUCTION: "bg-gradient-to-r from-purple-500/10 to-purple-600/10 text-purple-700 border border-purple-500/20",
+    COMPLETED: "bg-gradient-to-r from-green-500/10 to-green-600/10 text-green-700 border border-green-500/20",
+    DELIVERED: "bg-gradient-to-r from-teal-500/10 to-teal-600/10 text-teal-700 border border-teal-500/20",
+    CANCELLED: "bg-gradient-to-r from-red-500/10 to-red-600/10 text-red-700 border border-red-500/20",
 };
 
 export default async function DashboardPage() {
     const stats = await getDashboardStats();
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 fade-in">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight text-slate-900">Dashboard Overview</h2>
-                <p className="text-muted-foreground">Welcome to Hindustan Machinery ERP System</p>
+                <h2 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                    Dashboard Overview
+                </h2>
+                <p className="text-muted-foreground mt-2">Welcome to Hindustan Machinery ERP System</p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="hover:shadow-lg transition-shadow">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                        <IndianRupee className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium text-white/90">Total Revenue</CardTitle>
+                        <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                            <IndianRupee className="h-5 w-5 text-white" />
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">
+                        <div className="text-3xl font-bold">
                             ₹{stats.totalRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </div>
-                        <p className="text-xs text-muted-foreground">From paid invoices</p>
+                        <p className="text-xs text-white/80 mt-2 flex items-center gap-1">
+                            <TrendingUp className="h-3 w-3" />
+                            From paid invoices
+                        </p>
                     </CardContent>
                 </Card>
 
-                <Card className="hover:shadow-lg transition-shadow">
+                <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-purple-500 to-pink-500 text-white">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Active Orders</CardTitle>
-                        <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium text-white/90">Active Orders</CardTitle>
+                        <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                            <ClipboardList className="h-5 w-5 text-white" />
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.activeOrdersCount}</div>
-                        <p className="text-xs text-muted-foreground">In production or approved</p>
+                        <div className="text-3xl font-bold">{stats.activeOrdersCount}</div>
+                        <p className="text-xs text-white/80 mt-2">In production or approved</p>
                     </CardContent>
                 </Card>
 
-                <Card className="hover:shadow-lg transition-shadow">
+                <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-green-500 to-emerald-500 text-white">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Employees</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium text-white/90">Total Employees</CardTitle>
+                        <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                            <Users className="h-5 w-5 text-white" />
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.employeesCount}</div>
-                        <p className="text-xs text-muted-foreground">Across all branches</p>
+                        <div className="text-3xl font-bold">{stats.employeesCount}</div>
+                        <p className="text-xs text-white/80 mt-2">Across all branches</p>
                     </CardContent>
                 </Card>
 
-                <Card className="hover:shadow-lg transition-shadow">
+                <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-orange-500 to-red-500 text-white">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Active Branches</CardTitle>
-                        <Building2 className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium text-white/90">Active Branches</CardTitle>
+                        <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                            <Building2 className="h-5 w-5 text-white" />
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.branchesCount}</div>
-                        <p className="text-xs text-muted-foreground">Operating locations</p>
+                        <div className="text-3xl font-bold">{stats.branchesCount}</div>
+                        <p className="text-xs text-white/80 mt-2">Operating locations</p>
                     </CardContent>
                 </Card>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
                 {/* Recent Orders */}
-                <Card>
+                <Card className="border-border/50">
                     <CardHeader>
-                        <CardTitle>Recent Orders</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                            <ClipboardList className="h-5 w-5 text-primary" />
+                            Recent Orders
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
                         {stats.recentOrders.length === 0 ? (
-                            <div className="text-center py-6 text-muted-foreground">
-                                <Package className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                                <p>No orders yet</p>
+                            <div className="text-center py-12 text-muted-foreground">
+                                <Package className="h-16 w-16 mx-auto mb-4 opacity-20" />
+                                <p className="font-medium">No orders yet</p>
+                                <p className="text-sm mt-1">Orders will appear here once created</p>
                             </div>
                         ) : (
-                            <div className="space-y-4">
+                            <div className="space-y-3">
                                 {stats.recentOrders.map((order) => (
                                     <Link key={order.id} href={`/dashboard/orders/${order.id}`}>
-                                        <div className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer">
+                                        <div className="flex items-center justify-between p-4 hover:bg-accent/50 rounded-lg transition-all duration-200 border border-transparent hover:border-primary/20 cursor-pointer group">
                                             <div className="flex-1">
-                                                <div className="font-medium">{order.orderNumber}</div>
-                                                <div className="text-sm text-muted-foreground">
+                                                <div className="font-semibold text-base group-hover:text-primary transition-colors">{order.orderNumber}</div>
+                                                <div className="text-sm text-muted-foreground mt-1">
                                                     {order.customerName}
                                                 </div>
-                                                <div className="text-xs text-muted-foreground mt-1">
+                                                <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                                                    <Package className="h-3 w-3" />
                                                     {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
                                                 </div>
                                             </div>
@@ -159,32 +181,41 @@ export default async function DashboardPage() {
                 </Card>
 
                 {/* Quick Stats */}
-                <Card>
+                <Card className="border-border/50">
                     <CardHeader>
-                        <CardTitle>Today's Summary</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                            <TrendingUp className="h-5 w-5 text-primary" />
+                            Today's Summary
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-100">
                                 <div>
-                                    <div className="text-sm text-muted-foreground">Attendance Marked</div>
-                                    <div className="text-2xl font-bold text-blue-700">{stats.todayAttendance}</div>
+                                    <div className="text-sm text-muted-foreground font-medium">Attendance Marked</div>
+                                    <div className="text-3xl font-bold text-blue-700 mt-1">{stats.todayAttendance}</div>
                                 </div>
-                                <Users className="h-8 w-8 text-blue-600" />
+                                <div className="p-3 bg-blue-100 rounded-lg">
+                                    <Users className="h-8 w-8 text-blue-600" />
+                                </div>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-100">
                                 <div>
-                                    <div className="text-sm text-muted-foreground">Active Orders</div>
-                                    <div className="text-2xl font-bold text-green-700">{stats.activeOrdersCount}</div>
+                                    <div className="text-sm text-muted-foreground font-medium">Active Orders</div>
+                                    <div className="text-3xl font-bold text-green-700 mt-1">{stats.activeOrdersCount}</div>
                                 </div>
-                                <ClipboardList className="h-8 w-8 text-green-600" />
+                                <div className="p-3 bg-green-100 rounded-lg">
+                                    <ClipboardList className="h-8 w-8 text-green-600" />
+                                </div>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100">
                                 <div>
-                                    <div className="text-sm text-muted-foreground">Total Branches</div>
-                                    <div className="text-2xl font-bold text-purple-700">{stats.branchesCount}</div>
+                                    <div className="text-sm text-muted-foreground font-medium">Total Branches</div>
+                                    <div className="text-3xl font-bold text-purple-700 mt-1">{stats.branchesCount}</div>
                                 </div>
-                                <Building2 className="h-8 w-8 text-purple-600" />
+                                <div className="p-3 bg-purple-100 rounded-lg">
+                                    <Building2 className="h-8 w-8 text-purple-600" />
+                                </div>
                             </div>
                         </div>
                     </CardContent>
@@ -193,3 +224,4 @@ export default async function DashboardPage() {
         </div>
     );
 }
+

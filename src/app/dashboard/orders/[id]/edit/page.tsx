@@ -23,7 +23,10 @@ export default async function EditOrderPage({ params }: { params: { id: string }
                 </h2>
                 <p className="text-muted-foreground">Update order information</p>
             </div>
-            <EditOrderForm order={order} branches={branches} />
+            <EditOrderForm
+                order={JSON.parse(JSON.stringify(order))}
+                branches={JSON.parse(JSON.stringify(branches))}
+            />
         </div>
     );
 }

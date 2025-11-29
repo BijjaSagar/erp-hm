@@ -64,3 +64,56 @@ export async function createEmployee(prevState: any, formData: FormData) {
     revalidatePath("/dashboard/employees");
     return { message: "Success" };
 }
+
+export async function getEmployeeById(id: string) {
+    const session = await auth();
+    if (!session) return null;
+
+    try {
+        const employee = await prisma.employee.findUnique({
+            where: { id },
+            include: { branch: true },
+        });
+        return employee;
+    } catch (error) {
+        return null;
+    }
+}
+
+export async function updateEmployee(id: string, prevState: any, formData: FormData) {
+    const session = await auth();
+    if (!session) return { message: "Unauthorized" };
+
+    const validatedFields = employeeSchema.safeParse({
+        name: formData.get("name"),
+        designation: formData.get("designation"),
+        phone: formData.get("phone"),
+        branchId: formData.get("branchId"),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: "Missing Fields. Failed to Update Employee.",
+        };
+    }
+
+    const { name, designation, phone, branchId } = validatedFields.data;
+
+    try {
+        await prisma.employee.update({
+            where: { id },
+            data: {
+                name,
+                designation,
+                phone,
+                branchId,
+            },
+        });
+    } catch (error) {
+        return { message: "Database Error: Failed to Update Employee." };
+    }
+
+    revalidatePath("/dashboard/employees");
+    return { message: "Success" };
+}

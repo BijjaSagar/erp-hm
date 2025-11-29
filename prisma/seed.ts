@@ -1,9 +1,15 @@
 import { PrismaClient, Role } from '@prisma/client';
+import { hash } from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
     console.log('🌱 Starting database seed...');
+
+    // Hash passwords
+    const hashedAdminPassword = await hash('admin123', 10);
+    const hashedManagerPassword = await hash('manager123', 10);
+    const hashedOperatorPassword = await hash('operator123', 10);
 
     // Create branches
     const headOffice = await prisma.branch.upsert({
@@ -44,7 +50,7 @@ async function main() {
         update: {},
         create: {
             email: 'admin@hm-erp.com',
-            password: 'admin123', // TODO: Hash this in production
+            password: hashedAdminPassword,
             name: 'Admin User',
             role: Role.ADMIN,
             branchId: headOffice.id,
@@ -56,7 +62,7 @@ async function main() {
         update: {},
         create: {
             email: 'manager@hm-erp.com',
-            password: 'manager123',
+            password: hashedManagerPassword,
             name: 'Branch Manager',
             role: Role.BRANCH_MANAGER,
             branchId: branch1.id,
@@ -68,7 +74,7 @@ async function main() {
         update: {},
         create: {
             email: 'operator@hm-erp.com',
-            password: 'operator123',
+            password: hashedOperatorPassword,
             name: 'Operator User',
             role: Role.OPERATOR,
             branchId: branch1.id,

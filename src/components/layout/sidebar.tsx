@@ -15,14 +15,16 @@ import {
     Settings,
     LogOut,
     Menu,
-    Wrench
+    Wrench,
+    Store,
+    ShoppingCart,
+    Package,
+    DollarSign
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import { Role } from "@prisma/client";
-
-// ... existing imports ...
 
 // Update routes to include roles
 const routes = [
@@ -30,73 +32,105 @@ const routes = [
         label: "Dashboard",
         icon: LayoutDashboard,
         href: "/dashboard",
-        color: "text-sky-500",
+        color: "text-blue-400",
         roles: ["ADMIN", "BRANCH_MANAGER"],
     },
     {
         label: "Branch Management",
         icon: Building2,
         href: "/dashboard/branches",
-        color: "text-violet-500",
+        color: "text-violet-400",
         roles: ["ADMIN"],
     },
     {
         label: "Employees",
         icon: Users,
         href: "/dashboard/employees",
-        color: "text-pink-700",
+        color: "text-pink-400",
         roles: ["ADMIN", "BRANCH_MANAGER"],
     },
     {
         label: "Attendance (GIS)",
         icon: MapPin,
         href: "/dashboard/attendance",
-        color: "text-orange-700",
+        color: "text-orange-400",
         roles: ["ADMIN", "OPERATOR", "PRODUCTION_SUPERVISOR"],
     },
     {
         label: "Orders",
         icon: ClipboardList,
         href: "/dashboard/orders",
-        color: "text-emerald-500",
+        color: "text-emerald-400",
         roles: ["ADMIN", "ORDER_TAKER", "PRODUCTION_SUPERVISOR"],
     },
     {
         label: "Production",
         icon: Factory,
         href: "/dashboard/production",
-        color: "text-green-700",
+        color: "text-green-400",
         roles: ["ADMIN", "PRODUCTION_SUPERVISOR"],
     },
     {
         name: "Finance & Invoices",
         icon: FileText,
         href: "/dashboard/invoices",
-        color: "text-blue-700",
+        color: "text-blue-400",
+        roles: ["ADMIN", "ACCOUNTANT"],
+    },
+    {
+        name: "Stores",
+        icon: Store,
+        href: "/dashboard/stores",
+        color: "text-purple-400",
+        roles: ["ADMIN", "STORE_MANAGER"],
+    },
+    {
+        name: "POS",
+        icon: ShoppingCart,
+        href: "/dashboard/pos",
+        color: "text-cyan-400",
+        roles: ["ADMIN", "STORE_MANAGER"],
+    },
+    {
+        name: "Stock Transfers",
+        icon: Package,
+        href: "/dashboard/stock-transfers",
+        color: "text-indigo-400",
+        roles: ["ADMIN", "PRODUCTION_SUPERVISOR", "STORE_MANAGER"],
+    },
+    {
+        name: "Accounting",
+        icon: DollarSign,
+        href: "/dashboard/accounting",
+        color: "text-emerald-400",
         roles: ["ADMIN", "ACCOUNTANT"],
     },
     {
         name: "Operator Dashboard",
         href: "/dashboard/operator",
         icon: Wrench,
+        color: "text-yellow-400",
         roles: ["ADMIN", "OPERATOR", "PRODUCTION_SUPERVISOR"],
     },
     {
         name: "Stock",
         href: "/dashboard/stock",
-        icon: ClipboardList, // Reusing icon for now
+        icon: ClipboardList,
+        color: "text-teal-400",
         roles: ["ADMIN", "OPERATOR", "PRODUCTION_SUPERVISOR"],
     },
     {
         name: "Production Reports",
         href: "/dashboard/reports/production",
         icon: FileText,
+        color: "text-indigo-400",
         roles: ["ADMIN", "PRODUCTION_SUPERVISOR"],
     },
     {
         name: "Settings",
         icon: Settings,
         href: "/dashboard/settings",
+        color: "text-gray-400",
         roles: ["ADMIN"],
     },
 ];
@@ -113,12 +147,15 @@ export function Sidebar({ role }: SidebarProps) {
     );
 
     return (
-        <div className="space-y-4 py-4 flex flex-col h-full bg-slate-900 text-white">
+        <div className="space-y-4 py-4 flex flex-col h-full bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-white border-r border-slate-700/50">
             <div className="px-3 py-2 flex-1">
-                <Link href="/dashboard" className="flex items-center pl-3 mb-14">
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                        HM ERP
-                    </h1>
+                <Link href="/dashboard" className="flex items-center pl-3 mb-10 group">
+                    <div className="relative">
+                        <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                            HM ERP
+                        </h1>
+                        <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-400 group-hover:w-full transition-all duration-300"></div>
+                    </div>
                 </Link>
                 <div className="space-y-1">
                     {filteredRoutes.map((route) => (
@@ -126,23 +163,28 @@ export function Sidebar({ role }: SidebarProps) {
                             key={route.href}
                             href={route.href}
                             className={cn(
-                                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
-                                pathname === route.href ? "text-white bg-white/10" : "text-zinc-400"
+                                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer rounded-lg transition-all duration-200 relative overflow-hidden",
+                                pathname === route.href
+                                    ? "text-white bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-l-4 border-blue-400 shadow-lg shadow-blue-500/10"
+                                    : "text-slate-400 hover:text-white hover:bg-white/5"
                             )}
                         >
-                            <div className="flex items-center flex-1">
-                                <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
+                            <div className="flex items-center flex-1 relative z-10">
+                                <route.icon className={cn("h-5 w-5 mr-3 transition-transform group-hover:scale-110", route.color)} />
                                 {route.label || route.name}
                             </div>
+                            {pathname === route.href && (
+                                <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                            )}
                         </Link>
                     ))}
                 </div>
             </div>
-            <div className="px-3 py-2">
+            <div className="px-3 py-2 border-t border-slate-700/50">
                 <form action={signOutAction}>
                     <Button
                         variant="ghost"
-                        className="w-full justify-start text-zinc-400 hover:text-white hover:bg-white/10"
+                        className="w-full justify-start text-slate-400 hover:text-white hover:bg-red-500/10 hover:border-l-4 hover:border-red-400 transition-all duration-200"
                         type="submit"
                     >
                         <LogOut className="h-5 w-5 mr-3" />
@@ -158,13 +200,14 @@ export function MobileSidebar({ role }: SidebarProps) {
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden text-white">
+                <Button variant="ghost" size="icon" className="md:hidden text-white hover:bg-white/10">
                     <Menu />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 bg-slate-900 border-none w-72">
+            <SheetContent side="left" className="p-0 bg-slate-900 border-slate-700/50 w-72">
                 <Sidebar role={role} />
             </SheetContent>
         </Sheet>
     );
 }
+

@@ -72,3 +72,55 @@ export async function deleteBranch(id: string) {
         throw new Error("Failed to delete branch");
     }
 }
+
+export async function getBranchById(id: string) {
+    const session = await auth();
+    if (!session) return null;
+
+    try {
+        const branch = await prisma.branch.findUnique({
+            where: { id },
+        });
+        return branch;
+    } catch (error) {
+        return null;
+    }
+}
+
+export async function updateBranch(id: string, prevState: any, formData: FormData) {
+    const session = await auth();
+    if (!session || session.user.role !== "ADMIN") {
+        return { message: "Unauthorized" };
+    }
+
+    const validatedFields = branchSchema.safeParse({
+        name: formData.get("name"),
+        code: formData.get("code"),
+        address: formData.get("address"),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: "Missing Fields. Failed to Update Branch.",
+        };
+    }
+
+    const { name, code, address } = validatedFields.data;
+
+    try {
+        await prisma.branch.update({
+            where: { id },
+            data: {
+                name,
+                code,
+                address,
+            },
+        });
+    } catch (error) {
+        return { message: "Database Error: Failed to Update Branch." };
+    }
+
+    revalidatePath("/dashboard/branches");
+    return { message: "Success" };
+}

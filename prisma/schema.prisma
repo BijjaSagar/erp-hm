@@ -18,6 +18,7 @@ model Branch {
   orders    Order[]
   users     User[]
   machines  Machine[]
+  stockTransfersFrom StockTransfer[]
 }
 
 model User {
@@ -33,6 +34,10 @@ model User {
   branch     Branch?  @relation(fields: [branchId], references: [id])
   employee   Employee? @relation(fields: [employeeId], references: [id])
   stockTransactions StockTransaction[]
+  managedStore       Store?            @relation("StoreManager")
+  posTransactions    POSTransaction[]
+  transfersOut       StockTransfer[]   @relation("Transferrer")
+  transfersIn        StockTransfer[]   @relation("Receiver")
 }
 
 model Employee {
@@ -91,6 +96,7 @@ model Order {
   wastageLogs     WastageLog[]
   productionEntries ProductionEntry[]
   materialConsumptions MaterialConsumption[]
+  stockTransfers  StockTransfer[]
 }
 
 model OrderItem {
@@ -136,6 +142,7 @@ enum Role {
   OPERATOR
   ORDER_TAKER
   ACCOUNTANT
+  STORE_MANAGER
 }
 
 enum ProductionStage {
@@ -372,4 +379,210 @@ model MaterialConsumption {
   material          InventoryItem   @relation(fields: [materialId], references: [id])
   employee          Employee        @relation("MaterialConsumer", fields: [consumedBy], references: [id])
   productionEntry   ProductionEntry? @relation(fields: [productionEntryId], references: [id])
+}
+
+// ============================================
+// STORE & POS MODULE
+// ============================================
+
+// Store - Retail store/showroom
+model Store {
+  id              String   @id @default(cuid())
+  name            String
+  code            String   @unique
+  address         String
+  phone           String?
+  email           String?
+  gstNumber       String?
+  isActive        Boolean  @default(true)
+  managerId       String?  @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  manager         User?    @relation("StoreManager", fields: [managerId], references: [id])
+  inventory       StoreInventory[]
+  stockTransfersTo   StockTransfer[] @relation("TransferTo")
+  stockTransfersFrom StockTransfer[] @relation("TransferFrom")
+  posTransactions POSTransaction[]
+}
+
+// Store Inventory - Products available in store
+model StoreInventory {
+  id              String   @id @default(cuid())
+  storeId         String
+  productName     String
+  sku             String
+  quantity        Int
+  unit            String
+  costPrice       Float
+  sellingPrice    Float
+  reorderLevel    Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  store           Store    @relation(fields: [storeId], references: [id])
+  
+  @@unique([storeId, sku])
+}
+
+// Stock Transfer - Moving goods from production to store or between stores
+model StockTransfer {
+  id              String              @id @default(cuid())
+  transferNumber  String              @unique
+  fromType        TransferSourceType
+  fromBranchId    String?
+  fromStoreId     String?
+  toStoreId       String
+  status          TransferStatus      @default(PENDING)
+  orderId         String?
+  notes           String?
+  transferredBy   String
+  receivedBy      String?
+  transferredAt   DateTime            @default(now())
+  receivedAt      DateTime?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  fromBranch      Branch?             @relation(fields: [fromBranchId], references: [id])
+  fromStore       Store?              @relation("TransferFrom", fields: [fromStoreId], references: [id])
+  toStore         Store               @relation("TransferTo", fields: [toStoreId], references: [id])
+  order           Order?              @relation(fields: [orderId], references: [id])
+  transferrer     User                @relation("Transferrer", fields: [transferredBy], references: [id])
+  receiver        User?               @relation("Receiver", fields: [receivedBy], references: [id])
+  items           StockTransferItem[]
+}
+
+enum TransferSourceType {
+  PRODUCTION
+  STORE
+}
+
+enum TransferStatus {
+  PENDING
+  IN_TRANSIT
+  RECEIVED
+  CANCELLED
+}
+
+// Stock Transfer Items
+model StockTransferItem {
+  id              String        @id @default(cuid())
+  transferId      String
+  productName     String
+  sku             String
+  quantity        Int
+  unit            String
+  
+  transfer        StockTransfer @relation(fields: [transferId], references: [id], onDelete: Cascade)
+}
+
+// Customer - Retail customers
+model Customer {
+  id              String   @id @default(cuid())
+  name            String
+  phone           String?  @unique
+  email           String?
+  address         String?
+  gstNumber       String?
+  customerType    CustomerType @default(RETAIL)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  transactions    POSTransaction[]
+}
+
+enum CustomerType {
+  RETAIL
+  REGULAR
+  WHOLESALE
+}
+
+// POS Transaction - Retail sales
+model POSTransaction {
+  id              String            @id @default(cuid())
+  billNumber      String            @unique
+  storeId         String
+  customerId      String?
+  customerName    String?
+  subtotal        Float
+  discount        Float             @default(0)
+  taxAmount       Float             @default(0)
+  totalAmount     Float
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus     @default(COMPLETED)
+  cashierId       String
+  notes           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  store           Store             @relation(fields: [storeId], references: [id])
+  customer        Customer?         @relation(fields: [customerId], references: [id])
+  cashier         User              @relation(fields: [cashierId], references: [id])
+  items           POSTransactionItem[]
+  payments        Payment[]
+  accountingEntry AccountingEntry?
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  UPI
+  MIXED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+  CANCELLED
+}
+
+// POS Transaction Items
+model POSTransactionItem {
+  id              String         @id @default(cuid())
+  transactionId   String
+  productName     String
+  sku             String
+  quantity        Int
+  unitPrice       Float
+  discount        Float          @default(0)
+  taxRate         Float          @default(0)
+  totalPrice      Float
+  
+  transaction     POSTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+}
+
+// Payment - Payment details for POS transactions
+model Payment {
+  id              String         @id @default(cuid())
+  transactionId   String
+  method          PaymentMethod
+  amount          Float
+  reference       String?
+  createdAt       DateTime       @default(now())
+  
+  transaction     POSTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+}
+
+// Accounting Entry - Double-entry bookkeeping
+model AccountingEntry {
+  id              String            @id @default(cuid())
+  entryType       AccountingType
+  transactionId   String?           @unique
+  description     String
+  debitAccount    String
+  creditAccount   String
+  amount          Float
+  date            DateTime          @default(now())
+  createdAt       DateTime          @default(now())
+  
+  transaction     POSTransaction?   @relation(fields: [transactionId], references: [id])
+}
+
+enum AccountingType {
+  SALE
+  PURCHASE
+  EXPENSE
+  TRANSFER
+  ADJUSTMENT
 }

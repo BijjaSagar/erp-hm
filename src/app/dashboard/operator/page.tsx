@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getAssignedOrders, getOperatorStats } from "./actions";
+import { getAssignedOrders, getOperatorStats, getAllOperatorsStatus, getProductionOverview, getLeaveRequestsForApproval, getOperatorAnalytics } from "./actions";
 import { getActiveBreak } from "./break-actions";
 import { getActiveProductionSession, getOperatorMachines } from "./production-actions";
 import { ProductionStage } from "@prisma/client";
@@ -18,8 +18,12 @@ import { WastageHistoryView } from "./wastage-history";
 import { MachineIssueForm } from "./machine-issue-form";
 import { MachineStatusList } from "./machine-status-list";
 import { ProductionReports } from "./production-reports";
+import { AdminOperatorOverview } from "./admin-operator-overview";
+import { OperatorAnalytics } from "./operator-analytics";
+import { LeaveManagement } from "./leave-management";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import {
     LayoutDashboard,
@@ -30,10 +34,166 @@ import {
     AlertTriangle,
     Wrench,
     BarChart3,
-    Settings
+    Settings,
+    Users,
+    Activity,
+    FileText,
+    TrendingUp
 } from "lucide-react";
+import { auth } from "@/auth";
 
 export default async function OperatorDashboard() {
+    const session = await auth();
+
+    // Admin View
+    if (session?.user?.role === "ADMIN") {
+        const { operators } = await getAllOperatorsStatus();
+        const { activeSessions, completedToday, ordersByStage, recentLogs } = await getProductionOverview();
+        const { leaveRequests } = await getLeaveRequestsForApproval('PENDING');
+        const { analytics } = await getOperatorAnalytics();
+
+        return (
+            <div className="p-6 space-y-6 fade-in">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                            Operator Management
+                        </h1>
+                        <p className="text-muted-foreground mt-1">Monitor and manage all operators</p>
+                    </div>
+                    <Badge variant="outline" className="text-sm px-3 py-1">
+                        Admin View
+                    </Badge>
+                </div>
+
+                <Tabs defaultValue="overview" className="space-y-6">
+                    <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
+                        <TabsTrigger value="overview" className="flex items-center gap-2">
+                            <Users className="h-4 w-4" />
+                            <span className="hidden sm:inline">Operators</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="production" className="flex items-center gap-2">
+                            <Activity className="h-4 w-4" />
+                            <span className="hidden sm:inline">Production</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="analytics" className="flex items-center gap-2">
+                            <TrendingUp className="h-4 w-4" />
+                            <span className="hidden sm:inline">Analytics</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="leaves" className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4" />
+                            <span className="hidden sm:inline">Leaves</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="machines" className="flex items-center gap-2">
+                            <Wrench className="h-4 w-4" />
+                            <span className="hidden sm:inline">Machines</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="reports" className="flex items-center gap-2">
+                            <FileText className="h-4 w-4" />
+                            <span className="hidden sm:inline">Reports</span>
+                        </TabsTrigger>
+                    </TabsList>
+
+                    {/* Operators Overview Tab */}
+                    <TabsContent value="overview">
+                        <AdminOperatorOverview operators={operators || []} />
+                    </TabsContent>
+
+                    {/* Production Monitoring Tab */}
+                    <TabsContent value="production" className="space-y-6">
+                        <div className="grid gap-4 md:grid-cols-3">
+                            <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50">
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="text-sm font-medium text-blue-700">Active Sessions</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-3xl font-bold text-blue-900">{activeSessions?.length || 0}</div>
+                                </CardContent>
+                            </Card>
+                            <Card className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="text-sm font-medium text-green-700">Completed Today</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-3xl font-bold text-green-900">{completedToday || 0}</div>
+                                </CardContent>
+                            </Card>
+                            <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="text-sm font-medium text-purple-700">In Progress</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-3xl font-bold text-purple-900">
+                                        {ordersByStage?.reduce((sum, stage) => sum + stage._count, 0) || 0}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Recent Production Logs */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Recent Production Activity</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-3">
+                                    {recentLogs && recentLogs.length > 0 ? (
+                                        recentLogs.map((log: any) => (
+                                            <div key={log.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                                                <div className="flex items-center gap-3">
+                                                    <Badge variant="outline">{log.stage}</Badge>
+                                                    <span className="font-medium">{log.order.orderNumber}</span>
+                                                    <span className="text-sm text-muted-foreground">by {log.employee.name}</span>
+                                                </div>
+                                                <span className="text-sm text-muted-foreground">
+                                                    {new Date(log.timestamp).toLocaleTimeString()}
+                                                </span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-center text-muted-foreground py-8">No recent activity</p>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* Analytics Tab */}
+                    <TabsContent value="analytics">
+                        {analytics ? (
+                            <OperatorAnalytics analytics={analytics} />
+                        ) : (
+                            <Card>
+                                <CardContent className="py-12 text-center text-muted-foreground">
+                                    No analytics data available
+                                </CardContent>
+                            </Card>
+                        )}
+                    </TabsContent>
+
+                    {/* Leave Management Tab */}
+                    <TabsContent value="leaves">
+                        <LeaveManagement
+                            leaveRequests={leaveRequests || []}
+                            adminId={session.user.id || ''}
+                        />
+                    </TabsContent>
+
+                    {/* Machines Tab */}
+                    <TabsContent value="machines">
+                        <MachineStatusList />
+                    </TabsContent>
+
+                    {/* Reports Tab */}
+                    <TabsContent value="reports">
+                        <ProductionReports />
+                    </TabsContent>
+                </Tabs>
+            </div>
+        );
+    }
+
+    // Operator View (existing code)
     const { orders, error } = await getAssignedOrders();
     const { stats } = await getOperatorStats();
     const { break: activeBreak } = await getActiveBreak();

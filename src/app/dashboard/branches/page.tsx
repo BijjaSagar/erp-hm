@@ -73,7 +73,9 @@ export default async function BranchesPage() {
                                         </TableCell>
                                         <TableCell>{new Date(branch.createdAt).toLocaleDateString()}</TableCell>
                                         <TableCell className="text-right">
-                                            <Button variant="ghost" size="sm">Edit</Button>
+                                            <Link href={`/dashboard/branches/${branch.id}/edit`}>
+                                                <Button variant="ghost" size="sm">Edit</Button>
+                                            </Link>
                                         </TableCell>
                                     </TableRow>
                                 ))

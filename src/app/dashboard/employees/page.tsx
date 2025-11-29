@@ -72,7 +72,9 @@ export default async function EmployeesPage() {
                                         </TableCell>
                                         <TableCell>{employee.phone || "N/A"}</TableCell>
                                         <TableCell className="text-right">
-                                            <Button variant="ghost" size="sm">Edit</Button>
+                                            <Link href={`/dashboard/employees/${employee.id}/edit`}>
+                                                <Button variant="ghost" size="sm">Edit</Button>
+                                            </Link>
                                         </TableCell>
                                     </TableRow>
                                 ))

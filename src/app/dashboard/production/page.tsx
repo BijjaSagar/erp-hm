@@ -1,11 +1,13 @@
 export const dynamic = 'force-dynamic';
 
 import { getOrdersByStage, getProductionStats } from "@/actions/production";
+import { getStoresForTransfer } from "@/actions/stock-transfer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ProductionStage } from "@prisma/client";
 import { Package, ArrowRight } from "lucide-react";
+import { QuickTransferButton } from "./quick-transfer-button";
 
 const stageColors: Record<ProductionStage, string> = {
     PENDING: "bg-slate-100 text-slate-800 border-slate-300",
@@ -34,9 +36,10 @@ const stages: ProductionStage[] = [
 ];
 
 export default async function ProductionPage() {
-    const [orders, stats] = await Promise.all([
+    const [orders, stats, stores] = await Promise.all([
         getOrdersByStage(),
         getProductionStats(),
+        getStoresForTransfer(),
     ]);
 
     // Group orders by stage
@@ -109,7 +112,18 @@ export default async function ProductionPage() {
                                                                 </Badge>
                                                             )}
                                                         </div>
-                                                        <div className="mt-3 pt-3 border-t flex justify-end">
+                                                        <div className="mt-3 pt-3 border-t flex justify-between items-center">
+                                                            {stage === ProductionStage.COMPLETED && (
+                                                                <QuickTransferButton
+                                                                    order={{
+                                                                        id: order.id,
+                                                                        orderNumber: order.orderNumber,
+                                                                        customerName: order.customerName,
+                                                                        items: order.items || []
+                                                                    }}
+                                                                    stores={stores}
+                                                                />
+                                                            )}
                                                             <Link href={`/dashboard/production/${order.id}/update`}>
                                                                 <div className="text-xs text-blue-600 hover:text-blue-800 flex items-center">
                                                                     Update Stage
