@@ -158,6 +158,10 @@ export function Sidebar({ role }: SidebarProps) {
                     </div>
                 </Link>
                 <div className="space-y-1">
+                    {/* DEBUG: Remove after fixing */}
+                    <div className="text-xs text-slate-500 px-3 py-1">
+                        Role: {role || "None"}
+                    </div>
                     {filteredRoutes.map((route) => (
                         <Link
                             key={route.href}
