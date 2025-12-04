@@ -11,6 +11,7 @@ const signInSchema = z.object({
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    trustHost: true, // Automatically trust the host header (required for Vercel)
     providers: [
         Credentials({
             credentials: {

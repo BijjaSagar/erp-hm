@@ -1,4 +1,4 @@
-import { getCompletedOrdersForTransfer, getStoresForTransfer, transferFromProduction } from "@/actions/stock-transfer";
+import { getCompletedOrdersForTransfer, getStoresForTransfer } from "@/actions/stock-transfer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,42 +8,13 @@ import {
     ArrowLeft,
     Package,
     Building2,
-    ArrowRight,
     CheckCircle2
 } from "lucide-react";
+import { createTransferFromForm } from "@/actions/stock-transfer-form";
 
 export default async function NewStockTransferPage() {
     const completedOrders = await getCompletedOrdersForTransfer();
     const stores = await getStoresForTransfer();
-
-    async function createTransfer(formData: FormData) {
-        "use server";
-
-        const orderId = formData.get("orderId") as string;
-        const storeId = formData.get("storeId") as string;
-
-        if (!orderId || !storeId) {
-            return;
-        }
-
-        // Get order details to create items
-        const order = completedOrders.find(o => o.id === orderId);
-        if (!order) return;
-
-        // Create items from order
-        const items = order.items.map(item => ({
-            productName: item.productName,
-            sku: `SKU-${item.id}`,
-            quantity: item.quantity,
-            unit: "pcs"
-        }));
-
-        const result = await transferFromProduction(orderId, storeId, items);
-
-        if (result.message.includes("successfully")) {
-            redirect("/dashboard/stock-transfers");
-        }
-    }
 
     return (
         <div className="p-6 space-y-6 fade-in">
@@ -99,7 +70,7 @@ export default async function NewStockTransferPage() {
                     </CardContent>
                 </Card>
             ) : (
-                <form action={createTransfer}>
+                <form action={createTransferFromForm}>
                     <div className="space-y-6">
                         {/* Select Order */}
                         <Card>

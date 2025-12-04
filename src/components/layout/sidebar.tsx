@@ -148,7 +148,7 @@ export function Sidebar({ role }: SidebarProps) {
 
     return (
         <div className="space-y-4 py-4 flex flex-col h-full bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-white border-r border-slate-700/50">
-            <div className="px-3 py-2 flex-1">
+            <div className="px-3 py-2 flex-1 flex flex-col overflow-hidden">
                 <Link href="/dashboard" className="flex items-center pl-3 mb-10 group">
                     <div className="relative">
                         <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
@@ -157,7 +157,7 @@ export function Sidebar({ role }: SidebarProps) {
                         <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-400 group-hover:w-full transition-all duration-300"></div>
                     </div>
                 </Link>
-                <div className="space-y-1">
+                <div className="space-y-1 overflow-y-auto flex-1 pr-2">
                     {/* DEBUG: Remove after fixing */}
                     <div className="text-xs text-slate-500 px-3 py-1">
                         Role: {role || "None"}
