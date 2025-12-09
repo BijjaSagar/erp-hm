@@ -127,3 +127,36 @@ export async function getTodayAttendance() {
         },
     });
 }
+
+export async function checkOutAttendance(attendanceId: string) {
+    const session = await auth();
+    if (!session) return { message: "Unauthorized" };
+
+    try {
+        const attendance = await prisma.attendance.findUnique({
+            where: { id: attendanceId },
+        });
+
+        if (!attendance) {
+            return { message: "Attendance record not found" };
+        }
+
+        if (attendance.checkOut) {
+            return { message: "Already checked out" };
+        }
+
+        await prisma.attendance.update({
+            where: { id: attendanceId },
+            data: {
+                checkOut: new Date(),
+                status: "PRESENT",
+            },
+        });
+
+        revalidatePath("/dashboard/attendance");
+        return { message: "Checked out successfully" };
+    } catch (error) {
+        console.error("Error checking out:", error);
+        return { message: "Failed to check out" };
+    }
+}

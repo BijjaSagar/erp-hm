@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateEmployee } from "@/actions/employee";
+import { updateEmployee, deleteEmployee } from "@/actions/employee";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Branch, Employee } from "@prisma/client";
@@ -35,6 +35,7 @@ export default function EditEmployeeForm({ employee, branches }: EditEmployeeFor
     const router = useRouter();
     const [state, setState] = useState<FormState>(initialState);
     const [isPending, startTransition] = useTransition();
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleSubmit = (formData: FormData) => {
         startTransition(async () => {
@@ -45,6 +46,27 @@ export default function EditEmployeeForm({ employee, branches }: EditEmployeeFor
                 router.push("/dashboard/employees");
             }
         });
+    };
+
+    const handleDelete = async () => {
+        if (!confirm(`Are you sure you want to delete employee "${employee.name}"? This action cannot be undone.`)) {
+            return;
+        }
+
+        setIsDeleting(true);
+        try {
+            const result = await deleteEmployee(employee.id);
+            if (result.message.includes("successfully")) {
+                router.push("/dashboard/employees");
+            } else {
+                alert(result.message);
+                setIsDeleting(false);
+            }
+        } catch (error) {
+            console.error("Error deleting employee:", error);
+            alert("Failed to delete employee");
+            setIsDeleting(false);
+        }
     };
 
     return (
@@ -123,7 +145,7 @@ export default function EditEmployeeForm({ employee, branches }: EditEmployeeFor
                         <Button
                             type="submit"
                             className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 text-white"
-                            disabled={isPending}
+                            disabled={isPending || isDeleting}
                         >
                             {isPending ? (
                                 <>
@@ -134,8 +156,26 @@ export default function EditEmployeeForm({ employee, branches }: EditEmployeeFor
                                 "Update Employee"
                             )}
                         </Button>
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={handleDelete}
+                            disabled={isPending || isDeleting}
+                        >
+                            {isDeleting ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Deleting...
+                                </>
+                            ) : (
+                                <>
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete
+                                </>
+                            )}
+                        </Button>
                         <Link href="/dashboard/employees">
-                            <Button type="button" variant="outline">
+                            <Button type="button" variant="outline" disabled={isPending || isDeleting}>
                                 Cancel
                             </Button>
                         </Link>

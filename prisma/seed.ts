@@ -11,38 +11,48 @@ async function main() {
     const hashedManagerPassword = await hash('manager123', 10);
     const hashedOperatorPassword = await hash('operator123', 10);
 
-    // Create branches
-    const headOffice = await prisma.branch.upsert({
-        where: { code: 'HO' },
+    // Create branches with new naming convention
+    const hm1 = await prisma.branch.upsert({
+        where: { code: 'HM1' },
         update: {},
         create: {
-            name: 'Head Office',
-            code: 'HO',
-            address: '123 Main Street, Mumbai, Maharashtra 400001',
+            name: 'HM1',
+            code: 'HM1',
+            address: 'HM1 Branch, Mumbai, Maharashtra 400001',
         },
     });
 
-    const branch1 = await prisma.branch.upsert({
-        where: { code: 'BR1' },
+    const hm2 = await prisma.branch.upsert({
+        where: { code: 'HM2' },
         update: {},
         create: {
-            name: 'Branch 1 - Pune',
-            code: 'BR1',
-            address: '456 MG Road, Pune, Maharashtra 411001',
+            name: 'HM2',
+            code: 'HM2',
+            address: 'HM2 Branch, Pune, Maharashtra 411001',
         },
     });
 
-    const branch2 = await prisma.branch.upsert({
-        where: { code: 'BR2' },
+    const hp1 = await prisma.branch.upsert({
+        where: { code: 'HP1' },
         update: {},
         create: {
-            name: 'Branch 2 - Delhi',
-            code: 'BR2',
-            address: '789 Connaught Place, New Delhi 110001',
+            name: 'HP1',
+            code: 'HP1',
+            address: 'HP1 Branch, Delhi 110001',
         },
     });
 
-    console.log('✅ Created branches:', { headOffice, branch1, branch2 });
+    const hp2 = await prisma.branch.upsert({
+        where: { code: 'HP2' },
+        update: {},
+        create: {
+            name: 'HP2',
+            code: 'HP2',
+            address: 'HP2 Branch, Bangalore 560001',
+        },
+    });
+
+    console.log('✅ Created branches:', { hm1, hm2, hp1, hp2 });
 
     // Create users
     const adminUser = await prisma.user.upsert({
@@ -53,7 +63,7 @@ async function main() {
             password: hashedAdminPassword,
             name: 'Admin User',
             role: Role.ADMIN,
-            branchId: headOffice.id,
+            branchId: hm1.id,
         },
     });
 
@@ -65,7 +75,7 @@ async function main() {
             password: hashedManagerPassword,
             name: 'Branch Manager',
             role: Role.BRANCH_MANAGER,
-            branchId: branch1.id,
+            branchId: hm2.id,
         },
     });
 
@@ -77,7 +87,7 @@ async function main() {
             password: hashedOperatorPassword,
             name: 'Operator User',
             role: Role.OPERATOR,
-            branchId: branch1.id,
+            branchId: hm2.id,
         },
     });
 
@@ -93,7 +103,7 @@ async function main() {
             designation: 'Production Supervisor',
             phone: '+91-9876543210',
             gpsCoordinates: '19.0760,72.8777', // Mumbai coordinates
-            branchId: headOffice.id,
+            branchId: hm1.id,
         },
     });
 
@@ -106,7 +116,7 @@ async function main() {
             designation: 'Operator',
             phone: '+91-9876543211',
             gpsCoordinates: '18.5204,73.8567', // Pune coordinates
-            branchId: branch1.id,
+            branchId: hm2.id,
         },
     });
 
@@ -119,7 +129,7 @@ async function main() {
             designation: 'Welder',
             phone: '+91-9876543212',
             gpsCoordinates: '18.5204,73.8567', // Pune coordinates
-            branchId: branch1.id,
+            branchId: hm2.id,
         },
     });
 
@@ -132,7 +142,7 @@ async function main() {
             designation: 'Quality Inspector',
             phone: '+91-9876543213',
             gpsCoordinates: '28.6139,77.2090', // Delhi coordinates
-            branchId: branch2.id,
+            branchId: hp1.id,
         },
     });
 

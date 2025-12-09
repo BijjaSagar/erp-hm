@@ -146,6 +146,7 @@ export async function updateStore(id: string, prevState: any, formData: FormData
     }
 
     const { name, code, address, phone, email, gstNumber, managerId } = validatedFields.data;
+    const isActive = formData.get("isActive") === "true";
 
     try {
         await prisma.store.update({
@@ -158,6 +159,7 @@ export async function updateStore(id: string, prevState: any, formData: FormData
                 email: email || null,
                 gstNumber,
                 managerId: managerId || null,
+                isActive,
             },
         });
     } catch (error) {
@@ -167,7 +169,7 @@ export async function updateStore(id: string, prevState: any, formData: FormData
 
     revalidatePath("/dashboard/stores");
     revalidatePath(`/dashboard/stores/${id}`);
-    return { message: "Success" };
+    return { message: "Store updated successfully" };
 }
 
 export async function deleteStore(id: string) {

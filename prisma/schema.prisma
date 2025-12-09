@@ -143,6 +143,7 @@ enum Role {
   ORDER_TAKER
   ACCOUNTANT
   STORE_MANAGER
+  MARKETING_HEAD
 }
 
 enum ProductionStage {
@@ -155,6 +156,7 @@ enum ProductionStage {
   GRINDING
   FINISHING
   PAINTING
+  PLYWOOD_FITTING
   COMPLETED
 }
 
@@ -585,4 +587,97 @@ enum AccountingType {
   EXPENSE
   TRANSFER
   ADJUSTMENT
+}
+
+// ============================================
+// MARKETING HEAD MODULE
+// ============================================
+
+// Raw Material - Inventory managed by Marketing Head
+model RawMaterial {
+  id              String   @id @default(cuid())
+  name            String
+  category        String   // M.S Sheet, Handel, Hinges, etc.
+  unit            String   // kg, pieces, liters, etc.
+  quantity        Float    @default(0)
+  reorderLevel    Float?
+  currentPrice    Float?   // Latest purchase price
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  purchases       RawMaterialPurchase[]
+  usage           RawMaterialUsage[]
+}
+
+// Seller - Suppliers of raw materials
+model Seller {
+  id          String   @id @default(cuid())
+  name        String
+  contact     String?
+  phone       String?
+  email       String?
+  address     String?
+  gstNumber   String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  purchases   RawMaterialPurchase[]
+}
+
+// Raw Material Purchase - Purchase records
+model RawMaterialPurchase {
+  id                  String   @id @default(cuid())
+  sellerId            String
+  materialId          String
+  quantity            Float
+  unit                String
+  pricePerUnit        Float
+  totalPrice          Float
+  transportationCost  Float    @default(0)
+  grandTotal          Float    // totalPrice + transportationCost
+  billNumber          String?
+  billDate            DateTime?
+  purchaseDate        DateTime @default(now())
+  notes               String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  seller              Seller       @relation(fields: [sellerId], references: [id])
+  material            RawMaterial  @relation(fields: [materialId], references: [id])
+}
+
+// Raw Material Usage - Track consumption
+model RawMaterialUsage {
+  id          String   @id @default(cuid())
+  materialId  String
+  quantity    Float
+  unit        String
+  usedFor     String?  // Purpose/Project
+  usedBy      String?  // Employee/Department
+  notes       String?
+  usedAt      DateTime @default(now())
+  createdAt   DateTime @default(now())
+  
+  material    RawMaterial @relation(fields: [materialId], references: [id])
+}
+
+// Final Product Sale - Sales managed by Marketing Head
+model FinalProductSale {
+  id              String   @id @default(cuid())
+  productName     String
+  description     String?
+  quantity        Int
+  unit            String   @default("pieces")
+  pricePerUnit    Float
+  totalPrice      Float
+  customerName    String?
+  customerPhone   String?
+  customerAddress String?
+  saleDate        DateTime @default(now())
+  paymentStatus   String   @default("PENDING") // PENDING, PAID, PARTIAL
+  paidAmount      Float    @default(0)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

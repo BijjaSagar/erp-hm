@@ -117,3 +117,40 @@ export async function updateEmployee(id: string, prevState: any, formData: FormD
     revalidatePath("/dashboard/employees");
     return { message: "Success" };
 }
+
+export async function deleteEmployee(id: string) {
+    const session = await auth();
+    if (!session) return { message: "Unauthorized" };
+
+    try {
+        // Check if employee has related records
+        const employee = await prisma.employee.findUnique({
+            where: { id },
+            include: {
+                _count: {
+                    select: {
+                        attendance: true,
+                        productionLogs: true,
+                        breaks: true,
+                        leaveRequests: true,
+                    },
+                },
+            },
+        });
+
+        if (!employee) {
+            return { message: "Employee not found" };
+        }
+
+        // Delete the employee (cascading deletes will handle related records)
+        await prisma.employee.delete({
+            where: { id },
+        });
+
+        revalidatePath("/dashboard/employees");
+        return { message: "Employee deleted successfully" };
+    } catch (error) {
+        console.error("Error deleting employee:", error);
+        return { message: "Failed to delete employee. They may have related records." };
+    }
+}

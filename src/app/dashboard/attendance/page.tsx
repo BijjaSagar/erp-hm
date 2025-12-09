@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { CheckOutButton } from "./checkout-button";
 
 export default async function AttendancePage() {
     const attendanceRecords = await getTodayAttendance();
@@ -42,12 +43,13 @@ export default async function AttendancePage() {
                                 <TableHead>Check Out</TableHead>
                                 <TableHead>Location</TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {attendanceRecords.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                                    <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
                                         No attendance records for today.
                                     </TableCell>
                                 </TableRow>
@@ -81,6 +83,11 @@ export default async function AttendancePage() {
                                             <Badge variant={record.checkOut ? "secondary" : "default"}>
                                                 {record.checkOut ? "Completed" : "Present"}
                                             </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            {!record.checkOut && (
+                                                <CheckOutButton attendanceId={record.id} />
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))
