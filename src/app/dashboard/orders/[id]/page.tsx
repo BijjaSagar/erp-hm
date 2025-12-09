@@ -28,12 +28,13 @@ const stageColors = {
     GRINDING: "bg-zinc-100 text-zinc-800",
     FINISHING: "bg-cyan-100 text-cyan-800",
     PAINTING: "bg-sky-100 text-sky-800",
+    PLYWOOD_FITTING: "bg-indigo-100 text-indigo-800",
     COMPLETED: "bg-green-100 text-green-800",
 };
 
 const productionStages = [
     "PENDING", "CUTTING", "SHAPING", "BENDING",
-    "WELDING_INNER", "WELDING_OUTER", "GRINDING", "FINISHING", "PAINTING", "COMPLETED"
+    "WELDING_INNER", "WELDING_OUTER", "GRINDING", "FINISHING", "PAINTING", "PLYWOOD_FITTING", "COMPLETED"
 ];
 
 export default async function OrderDetailPage({ params }: { params: { id: string } }) {

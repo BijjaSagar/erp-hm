@@ -31,6 +31,7 @@ const stageColors: Record<ProductionStage, string> = {
     GRINDING: "bg-zinc-100 text-zinc-800",
     FINISHING: "bg-cyan-100 text-cyan-800",
     PAINTING: "bg-sky-100 text-sky-800",
+    PLYWOOD_FITTING: "bg-indigo-100 text-indigo-800",
     COMPLETED: "bg-green-100 text-green-800",
 };
 
@@ -44,6 +45,7 @@ const stages: ProductionStage[] = [
     ProductionStage.GRINDING,
     ProductionStage.FINISHING,
     ProductionStage.PAINTING,
+    ProductionStage.PLYWOOD_FITTING,
     ProductionStage.COMPLETED,
 ];
 
