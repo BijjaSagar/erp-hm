@@ -15,7 +15,7 @@ export async function getRawMaterials() {
                     orderBy: { purchaseDate: "desc" },
                     take: 1,
                 },
-                usages: {
+                usage: {
                     orderBy: { usedAt: "desc" },
                     take: 5,
                 },
@@ -42,7 +42,7 @@ export async function getRawMaterialById(id: string) {
                     include: { seller: true },
                     orderBy: { purchaseDate: "desc" },
                 },
-                usages: {
+                usage: {
                     orderBy: { usedAt: "desc" },
                 },
             },
