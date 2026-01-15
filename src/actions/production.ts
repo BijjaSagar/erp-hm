@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
-import { ProductionStage } from "@prisma/client";
+import { ProductionStage, OrderStatus } from "@prisma/client";
 
 export async function createProductionLog(
     orderId: string,
@@ -103,14 +103,37 @@ export async function updateProductionStage(
             return { message: "Order ID and stage are required" };
         }
 
+        // Get current order to validate stage progression
+        const order = await prisma.order.findUnique({
+            where: { id: orderId },
+            select: { currentStage: true },
+        });
+
+        if (!order) {
+            return { message: "Order not found" };
+        }
+
+        // Validate stage progression
+        const stages = Object.values(ProductionStage);
+        const currentStageIndex = stages.indexOf(order.currentStage);
+        const newStageIndex = stages.indexOf(stage);
+
+        if (newStageIndex < currentStageIndex) {
+            return { message: "Cannot move to a previous stage" };
+        }
+
+        if (newStageIndex - currentStageIndex > 1) {
+            return { message: "Cannot skip stages. Please update to the next stage in sequence." };
+        }
+
         // Update order stage
         await prisma.order.update({
             where: { id: orderId },
             data: {
                 currentStage: stage,
                 status: stage === ProductionStage.COMPLETED
-                    ? "COMPLETED"
-                    : "IN_PRODUCTION",
+                    ? OrderStatus.COMPLETED
+                    : OrderStatus.IN_PRODUCTION,
             },
         });
 
@@ -142,12 +165,24 @@ export async function getProductionStats() {
         const stats: Record<string, number> = {};
 
         for (const stage of stages) {
+            // Define status filter based on stage
+            let statusFilter;
+
+            if (stage === ProductionStage.PENDING) {
+                // PENDING stage can have PENDING or APPROVED status
+                statusFilter = { in: [OrderStatus.PENDING, OrderStatus.APPROVED] };
+            } else if (stage === ProductionStage.COMPLETED) {
+                // COMPLETED stage should have COMPLETED status
+                statusFilter = { in: [OrderStatus.COMPLETED, OrderStatus.DELIVERED] };
+            } else {
+                // All other stages should be IN_PRODUCTION or APPROVED
+                statusFilter = { in: [OrderStatus.APPROVED, OrderStatus.IN_PRODUCTION] };
+            }
+
             const count = await prisma.order.count({
                 where: {
                     currentStage: stage,
-                    status: {
-                        in: ["APPROVED", "IN_PRODUCTION"],
-                    },
+                    status: statusFilter,
                 },
             });
             stats[stage] = count;
