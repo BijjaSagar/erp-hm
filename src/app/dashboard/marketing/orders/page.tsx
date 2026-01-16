@@ -1,9 +1,11 @@
 import { getPendingOrders, getMarketingOrders } from "@/actions/marketing-orders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OrderApprovalCard from "./order-approval-card";
-import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Clock, XCircle, Plus, Package, Truck } from "lucide-react";
+import Link from "next/link";
 
 export default async function MarketingOrdersPage() {
     const [pendingOrders, allOrders] = await Promise.all([
@@ -12,15 +14,26 @@ export default async function MarketingOrdersPage() {
     ]);
 
     const approvedOrders = allOrders.filter(o => o.status === "APPROVED");
+    const inProductionOrders = allOrders.filter(o => o.status === "IN_PRODUCTION");
+    const completedOrders = allOrders.filter(o => o.status === "COMPLETED");
+    const deliveredOrders = allOrders.filter(o => o.status === "DELIVERED");
     const rejectedOrders = allOrders.filter(o => o.status === "CANCELLED");
 
     return (
         <div className="space-y-6">
-            <div>
-                <h2 className="text-3xl font-bold tracking-tight">Order Management</h2>
-                <p className="text-muted-foreground">
-                    Review and approve customer orders
-                </p>
+            <div className="flex justify-between items-center">
+                <div>
+                    <h2 className="text-3xl font-bold tracking-tight">Order Management</h2>
+                    <p className="text-muted-foreground">
+                        Create, review, and track customer orders
+                    </p>
+                </div>
+                <Link href="/dashboard/marketing/orders/new">
+                    <Button>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create Order
+                    </Button>
+                </Link>
             </div>
 
             {/* Statistics */}
@@ -103,6 +116,9 @@ export default async function MarketingOrdersPage() {
                         )}
                     </TabsTrigger>
                     <TabsTrigger value="approved">Approved</TabsTrigger>
+                    <TabsTrigger value="in-production">In Production</TabsTrigger>
+                    <TabsTrigger value="completed">Completed</TabsTrigger>
+                    <TabsTrigger value="delivered">Delivered</TabsTrigger>
                     <TabsTrigger value="rejected">Rejected</TabsTrigger>
                     <TabsTrigger value="all">All Orders</TabsTrigger>
                 </TabsList>
@@ -146,6 +162,51 @@ export default async function MarketingOrdersPage() {
                         </Card>
                     ) : (
                         rejectedOrders.map((order) => (
+                            <OrderApprovalCard key={order.id} order={order} showActions={false} />
+                        ))
+                    )}
+                </TabsContent>
+
+                <TabsContent value="in-production" className="space-y-4">
+                    {inProductionOrders.length === 0 ? (
+                        <Card>
+                            <CardContent className="flex flex-col items-center justify-center py-12">
+                                <Package className="h-12 w-12 text-muted-foreground mb-4" />
+                                <p className="text-muted-foreground">No orders in production</p>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        inProductionOrders.map((order) => (
+                            <OrderApprovalCard key={order.id} order={order} showActions={false} />
+                        ))
+                    )}
+                </TabsContent>
+
+                <TabsContent value="completed" className="space-y-4">
+                    {completedOrders.length === 0 ? (
+                        <Card>
+                            <CardContent className="flex flex-col items-center justify-center py-12">
+                                <CheckCircle className="h-12 w-12 text-muted-foreground mb-4" />
+                                <p className="text-muted-foreground">No completed orders</p>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        completedOrders.map((order) => (
+                            <OrderApprovalCard key={order.id} order={order} showActions={false} />
+                        ))
+                    )}
+                </TabsContent>
+
+                <TabsContent value="delivered" className="space-y-4">
+                    {deliveredOrders.length === 0 ? (
+                        <Card>
+                            <CardContent className="flex flex-col items-center justify-center py-12">
+                                <Truck className="h-12 w-12 text-muted-foreground mb-4" />
+                                <p className="text-muted-foreground">No delivered orders</p>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        deliveredOrders.map((order) => (
                             <OrderApprovalCard key={order.id} order={order} showActions={false} />
                         ))
                     )}
