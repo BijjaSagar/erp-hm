@@ -128,10 +128,8 @@ export default function POSInterface({ stores }: { stores: any[] }) {
         const result = await createPOSTransaction({}, formData);
 
         if (result.message.includes("successfully")) {
-            alert(`Sale completed! Bill Number: ${result.billNumber}`);
-            setCart([]);
-            setCustomerName("");
-            loadInventory();
+            // Redirect to invoice page for printing
+            router.push(`/dashboard/invoices/bill/${result.billNumber}`);
         } else {
             alert(result.message);
         }
