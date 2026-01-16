@@ -9,8 +9,8 @@ import { auth } from "@/auth";
  */
 export async function approveOrder(orderId: string) {
     const session = await auth();
-    if (!session || session.user.role !== "MARKETING_HEAD") {
-        return { message: "Unauthorized. Only Marketing Head can approve orders." };
+    if (!session || session.user.role !== "ADMIN") {
+        return { message: "Unauthorized. Only Admin can approve orders." };
     }
 
     try {
@@ -35,8 +35,8 @@ export async function approveOrder(orderId: string) {
  */
 export async function rejectOrder(orderId: string, reason?: string) {
     const session = await auth();
-    if (!session || session.user.role !== "MARKETING_HEAD") {
-        return { message: "Unauthorized. Only Marketing Head can reject orders." };
+    if (!session || session.user.role !== "ADMIN") {
+        return { message: "Unauthorized. Only Admin can reject orders." };
     }
 
     try {
