@@ -4,6 +4,7 @@ import { getSellerStats } from "@/actions/seller";
 import { getPurchaseStats } from "@/actions/purchase";
 import { getMaterialUsageStats } from "@/actions/material-usage";
 import { getProductSaleStats } from "@/actions/product-sale";
+import { getPendingOrders } from "@/actions/marketing-orders";
 import Link from "next/link";
 import {
     Package,
@@ -13,7 +14,8 @@ import {
     DollarSign,
     AlertTriangle,
     TrendingUp,
-    Activity
+    Activity,
+    ClipboardCheck
 } from "lucide-react";
 
 export default async function MarketingDashboard() {
@@ -23,15 +25,25 @@ export default async function MarketingDashboard() {
         purchaseStats,
         usageStats,
         saleStats,
+        pendingOrders,
     ] = await Promise.all([
         getRawMaterialStats(),
         getSellerStats(),
         getPurchaseStats(),
         getMaterialUsageStats(),
         getProductSaleStats(),
+        getPendingOrders(),
     ]);
 
     const stats = [
+        {
+            title: "Pending Orders",
+            value: pendingOrders.length,
+            icon: ClipboardCheck,
+            href: "/dashboard/marketing/orders",
+            description: "Awaiting approval",
+            trend: pendingOrders.length > 0 ? "warning" : "success",
+        },
         {
             title: "Raw Materials",
             value: materialStats.totalMaterials,
@@ -72,14 +84,6 @@ export default async function MarketingDashboard() {
             description: `${saleStats.totalSales} transactions`,
             trend: "success",
         },
-        {
-            title: "Pending Payments",
-            value: `₹${saleStats.pendingAmount.toLocaleString()}`,
-            icon: AlertTriangle,
-            href: "/dashboard/marketing/sales?status=pending",
-            description: "Outstanding amount",
-            trend: saleStats.pendingAmount > 0 ? "warning" : "success",
-        },
     ];
 
     return (
@@ -87,9 +91,31 @@ export default async function MarketingDashboard() {
             <div>
                 <h2 className="text-3xl font-bold tracking-tight">Marketing Head Dashboard</h2>
                 <p className="text-muted-foreground">
-                    Manage raw materials, suppliers, purchases, and sales
+                    Manage orders, raw materials, suppliers, purchases, and sales
                 </p>
             </div>
+
+            {/* Pending Orders Alert */}
+            {pendingOrders.length > 0 && (
+                <Card className="border-yellow-200 bg-yellow-50">
+                    <CardHeader>
+                        <CardTitle className="text-lg flex items-center gap-2 text-yellow-800">
+                            <AlertTriangle className="h-5 w-5" />
+                            {pendingOrders.length} Order(s) Awaiting Approval
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-sm text-yellow-700 mb-3">
+                            You have pending orders that need your review and approval
+                        </p>
+                        <Link href="/dashboard/marketing/orders">
+                            <button className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
+                                Review Orders →
+                            </button>
+                        </Link>
+                    </CardContent>
+                </Card>
+            )}
 
             {/* Stats Grid */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -128,6 +154,15 @@ export default async function MarketingDashboard() {
                         <CardTitle className="text-lg">Quick Actions</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
+                        <Link
+                            href="/dashboard/marketing/orders"
+                            className="block p-3 rounded-lg hover:bg-accent transition-colors"
+                        >
+                            <div className="flex items-center gap-2">
+                                <ClipboardCheck className="h-4 w-4" />
+                                <span className="font-medium">Review Orders</span>
+                            </div>
+                        </Link>
                         <Link
                             href="/dashboard/marketing/raw-materials/new"
                             className="block p-3 rounded-lg hover:bg-accent transition-colors"
