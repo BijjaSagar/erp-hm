@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Users, ClipboardList, IndianRupee, TrendingUp, Package } from "lucide-react";
+import { Building2, Users, ClipboardList, IndianRupee, TrendingUp, Package, AlertCircle } from "lucide-react";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import OrderApprovalButtons from "./order-approval-buttons";
 
 async function getDashboardStats() {
     // Get total revenue from paid invoices
@@ -44,6 +45,16 @@ async function getDashboardStats() {
         },
     });
 
+    // Get pending orders for approval
+    const pendingOrders = await prisma.order.findMany({
+        where: { status: "PENDING" },
+        include: {
+            items: true,
+        },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+    });
+
     return {
         totalRevenue,
         activeOrdersCount,
@@ -51,6 +62,7 @@ async function getDashboardStats() {
         branchesCount,
         recentOrders,
         todayAttendance,
+        pendingOrders,
     };
 }
 
@@ -138,7 +150,65 @@ export default async function DashboardPage() {
                 </Card>
             </div>
 
+            {/* Pending Orders Alert */}
+            {stats.pendingOrders.length > 0 && (
+                <Card className="border-yellow-200 bg-yellow-50">
+                    <CardHeader>
+                        <CardTitle className="text-lg flex items-center gap-2 text-yellow-800">
+                            <AlertCircle className="h-5 w-5" />
+                            {stats.pendingOrders.length} Order(s) Awaiting Approval
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-sm text-yellow-700 mb-3">
+                            These orders need approval before they can proceed to production
+                        </p>
+                        <Link href="/dashboard/orders">
+                            <button className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm">
+                                View All Orders →
+                            </button>
+                        </Link>
+                    </CardContent>
+                </Card>
+            )}
+
             <div className="grid gap-6 md:grid-cols-2">
+                {/* Pending Orders for Approval */}
+                {stats.pendingOrders.length > 0 && (
+                    <Card className="border-yellow-200">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-yellow-800">
+                                <AlertCircle className="h-5 w-5" />
+                                Pending Approvals
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-3">
+                                {stats.pendingOrders.map((order) => (
+                                    <div key={order.id} className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                                        <div className="flex items-start justify-between">
+                                            <div className="flex-1">
+                                                <div className="font-semibold text-base">{order.orderNumber}</div>
+                                                <div className="text-sm text-muted-foreground mt-1">
+                                                    {order.customerName}
+                                                </div>
+                                                <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                                                    <Package className="h-3 w-3" />
+                                                    {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
+                                                </div>
+                                            </div>
+                                            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
+                                                PENDING
+                                            </Badge>
+                                        </div>
+                                        <OrderApprovalButtons orderId={order.id} />
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
                 {/* Recent Orders */}
                 <Card className="border-border/50">
                     <CardHeader>
