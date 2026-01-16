@@ -119,10 +119,6 @@ export default async function StoreDetailPage({ params }: { params: { id: string
                                     <div className="text-sm text-muted-foreground">Email</div>
                                     <div className="font-medium">{store.manager.email}</div>
                                 </div>
-                                <div>
-                                    <div className="text-sm text-muted-foreground">Role</div>
-                                    <Badge variant="outline">{store.manager.role}</Badge>
-                                </div>
                             </>
                         ) : (
                             <div className="text-center py-8 text-muted-foreground">
@@ -143,20 +139,14 @@ export default async function StoreDetailPage({ params }: { params: { id: string
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
                             <div className="text-sm text-blue-700">Total Items</div>
-                            <div className="text-2xl font-bold text-blue-900">{store._count.inventory}</div>
+                            <div className="text-2xl font-bold text-blue-900">{store.inventory?.length || 0}</div>
                         </div>
                         <div className="p-4 bg-green-50 rounded-lg border border-green-100">
-                            <div className="text-sm text-green-700">Sales</div>
-                            <div className="text-2xl font-bold text-green-900">{store._count.sales}</div>
-                        </div>
-                        <div className="p-4 bg-purple-50 rounded-lg border border-purple-100">
-                            <div className="text-sm text-purple-700">Transfers</div>
-                            <div className="text-2xl font-bold text-purple-900">
-                                {(store._count.transfersFrom || 0) + (store._count.transfersTo || 0)}
-                            </div>
+                            <div className="text-sm text-green-700">POS Transactions</div>
+                            <div className="text-2xl font-bold text-green-900">{store._count.posTransactions}</div>
                         </div>
                     </div>
                 </CardContent>
