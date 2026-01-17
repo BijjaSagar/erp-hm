@@ -124,7 +124,7 @@ export default function EditStoreForm({ store, users }: { store: any; users: any
                                             <SelectValue placeholder="Select manager" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="">None</SelectItem>
+                                            <SelectItem value="none">None</SelectItem>
                                             {users.map((user) => (
                                                 <SelectItem key={user.id} value={user.id}>
                                                     {user.name} ({user.email})

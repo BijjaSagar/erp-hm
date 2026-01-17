@@ -89,7 +89,7 @@ export async function createStore(prevState: any, formData: FormData) {
         phone: formData.get("phone"),
         email: formData.get("email"),
         gstNumber: formData.get("gstNumber"),
-        managerId: formData.get("managerId") || undefined,
+        managerId: (() => { const val = formData.get("managerId") as string; return val && val !== "none" ? val : undefined; })(),
     });
 
     if (!validatedFields.success) {
@@ -110,7 +110,7 @@ export async function createStore(prevState: any, formData: FormData) {
                 phone,
                 email: email || null,
                 gstNumber,
-                managerId: managerId || null,
+                managerId: managerId && managerId !== "none" ? managerId : null,
             },
         });
     } catch (error) {
@@ -135,7 +135,7 @@ export async function updateStore(id: string, prevState: any, formData: FormData
         phone: formData.get("phone"),
         email: formData.get("email"),
         gstNumber: formData.get("gstNumber"),
-        managerId: formData.get("managerId") || undefined,
+        managerId: (() => { const val = formData.get("managerId") as string; return val && val !== "none" ? val : undefined; })(),
     });
 
     if (!validatedFields.success) {
@@ -158,7 +158,7 @@ export async function updateStore(id: string, prevState: any, formData: FormData
                 phone,
                 email: email || null,
                 gstNumber,
-                managerId: managerId || null,
+                managerId: managerId && managerId !== "none" ? managerId : null,
                 isActive,
             },
         });

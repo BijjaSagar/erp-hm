@@ -109,7 +109,7 @@ export default function EditOrderForm({ order, branches }: { order: any; branche
                                             <SelectValue placeholder="Select branch" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="">None</SelectItem>
+                                            <SelectItem value="none">None</SelectItem>
                                             {branches.map((branch) => (
                                                 <SelectItem key={branch.id} value={branch.id}>
                                                     {branch.name} ({branch.code})
@@ -123,8 +123,8 @@ export default function EditOrderForm({ order, branches }: { order: any; branche
 
                         {state?.message && (
                             <div className={`p-3 rounded-md text-sm text-center ${state.message.includes("successfully")
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-red-100 text-red-700"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
                                 }`}>
                                 {state.message}
                             </div>

@@ -62,7 +62,7 @@ export async function createOrder(prevState: any, formData: FormData) {
             customerName,
             customerPhone,
             customerAddress,
-            branchId: branchId || undefined,
+            branchId: branchId && branchId !== "none" ? branchId : undefined,
             items,
         });
 
@@ -76,7 +76,7 @@ export async function createOrder(prevState: any, formData: FormData) {
                 customerName: validated.customerName,
                 customerPhone: validated.customerPhone,
                 customerAddress: validated.customerAddress,
-                branchId: validated.branchId,
+                branchId: validated.branchId || null,
                 status: OrderStatus.PENDING,
                 currentStage: ProductionStage.PENDING,
                 items: {
@@ -194,7 +194,7 @@ export async function updateOrder(id: string, prevState: any, formData: FormData
                 customerPhone,
                 customerAddress,
                 status,
-                branchId: branchId || null,
+                branchId: branchId && branchId !== "none" ? branchId : null,
             },
         });
 
