@@ -1,0 +1,451 @@
+
+> hm-erp@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.16
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1531ms
+ ○ Compiling /src/middleware ...
+ ✓ Compiled /src/middleware in 649ms (291 modules)
+ ○ Compiling /dashboard/orders/new ...
+ ✓ Compiled /dashboard/orders/new in 1354ms (1316 modules)
+ GET /dashboard/orders/new 200 in 4863ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1258ms (955 modules)
+ GET /favicon.ico 200 in 1379ms
+=== CREATE ORDER DEBUG ===
+Customer data: {
+  customerName: 'Final Test',
+  customerPhone: '8888888888',
+  customerAddress: 'Final Address',
+  branchId: ''
+}
+Items JSON: [{"productName":"Final Product","quantity":12,"dimensions":"","material":""}]
+Parsed items: [
+  {
+    productName: 'Final Product',
+    quantity: 12,
+    dimensions: '',
+    material: ''
+  }
+]
+Validation passed
+Generated order number: ORD26010001
+=== CREATE ORDER ERROR ===
+Error type: PrismaClientKnownRequestError
+Error message: 
+Invalid `prisma.order.create()` invocation:
+
+
+Unique constraint failed on the fields: (`orderNumber`)
+Full error: PrismaClientKnownRequestError: 
+Invalid `prisma.order.create()` invocation:
+
+
+Unique constraint failed on the fields: (`orderNumber`)
+    at $n.handleRequestError (/Users/akash/Downloads/HM-ERP/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/Users/akash/Downloads/HM-ERP/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/Users/akash/Downloads/HM-ERP/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/Users/akash/Downloads/HM-ERP/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async createOrder (webpack-internal:///(action-browser)/./src/actions/order.ts:95:23)
+    at async /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:418
+    at async rk (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:8148)
+    at async r3 (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:41:1256)
+    at async doRender (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/base-server.js:1413:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/base-server.js:1574:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/base-server.js:1482:28)
+    at async DevServer.renderPageComponent (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/base-server.js:1908:24)
+    at async DevServer.renderToResponseImpl (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/base-server.js:1946:32)
+    at async DevServer.pipeImpl (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/base-server.js:921:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/base-server.js:817:17)
+    at async /Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/lib/router-server.js:350:24)
+    at async requestHandlerImpl (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'P2002',
+  clientVersion: '5.22.0',
+  meta: { modelName: 'Order', target: [ 'orderNumber' ] }
+}
+ POST /dashboard/orders/new 200 in 2005ms
+ ✓ Compiled in 993ms (1330 modules)
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 629ms
+ GET /dashboard/orders/new 200 in 355ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 506ms (955 modules)
+ GET /favicon.ico 200 in 699ms
+=== CREATE ORDER DEBUG ===
+Customer data: {
+  customerName: 'Demo Success Test',
+  customerPhone: '8983839143',
+  customerAddress: 'Demno Demo ',
+  branchId: 'cmirq78320000cknqh4tpgeso'
+}
+Items JSON: [{"productName":"jasfjsah goh","quantity":100,"dimensions":"100x50x30","material":"SS"}]
+Parsed items: [
+  {
+    productName: 'jasfjsah goh',
+    quantity: 100,
+    dimensions: '100x50x30',
+    material: 'SS'
+  }
+]
+Validation passed
+Generated order number: ORD26010002
+Order created successfully: cmkjhwk4p0004oievqz9jla6x
+ POST /dashboard/orders/new 200 in 5210ms
+ ○ Compiling /dashboard/orders/[id] ...
+ ✓ Compiled /dashboard/orders/[id] in 1076ms (1357 modules)
+ ✓ Compiled /dashboard in 180ms (1381 modules)
+ GET /dashboard/orders/new 200 in 1069ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1937ms (1007 modules)
+ GET /favicon.ico 200 in 3148ms
+ GET /dashboard/orders/new 200 in 826ms
+ GET /favicon.ico 200 in 11ms
+ ○ Compiling /dashboard/invoices ...
+ ✓ Compiled /dashboard/invoices in 1740ms (1411 modules)
+ GET /dashboard/invoices 200 in 5361ms
+ ✓ Compiled /favicon.ico in 166ms (1023 modules)
+ GET /favicon.ico 200 in 324ms
+ ✓ Compiled /_not-found in 447ms (1444 modules)
+ GET /dashboard/invoices/cmislgznn00034cvi8hoowj52/edit 404 in 68ms
+ GET /dashboard/invoices 200 in 1158ms
+ GET /favicon.ico 200 in 25ms
+ ✓ Compiled /dashboard/orders/[id] in 429ms (1039 modules)
+ GET /dashboard 200 in 4947ms
+ GET /favicon.ico 200 in 17ms
+ ✓ Compiled in 543ms (432 modules)
+ ○ Compiling /dashboard/invoices/[id] ...
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 759ms
+ ✓ Compiled /dashboard/invoices/[id] in 903ms (1477 modules)
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button data-slot="button" className=... onClick={function onClick} children=...>
+                                                   ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "2651447188"
+ GET /dashboard/invoices/cmislgznn00034cvi8hoowj52?_rsc=16yhx 200 in 1318ms
+ ✓ Compiled in 471ms (440 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 370ms (440 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /dashboard/invoices?_rsc=kbf4j 200 in 952ms
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 2582ms
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 2271ms
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 2396ms
+ GET /dashboard/invoices 200 in 3696ms
+ GET /favicon.ico 200 in 64ms
+ ✓ Compiled in 281ms (440 modules)
+ ✓ Compiled in 160ms (440 modules)
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 497ms
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 549ms
+ GET /dashboard/invoices?_rsc=9gys7 200 in 988ms
+ GET /dashboard/invoices?_rsc=9gys7 200 in 1719ms
+ ✓ Compiled in 545ms (1491 modules)
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 802ms
+ GET /dashboard/invoices?_rsc=9gys7 200 in 1036ms
+ GET /dashboard/invoices 200 in 781ms
+ GET /favicon.ico 200 in 19ms
+ ○ Compiling /dashboard/invoices/[id]/edit ...
+ ✓ Compiled /dashboard/invoices/[id]/edit in 656ms (1490 modules)
+ ✓ Compiled /dashboard/invoices/[id] in 276ms (1065 modules)
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button data-slot="button" className=... onClick={function onClick} children=...>
+                                                   ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "2651447188"
+ ✓ Compiled in 261ms (451 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 158ms (451 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 484ms
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 623ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button data-slot="button" className=... onClick={function onClick} children=...>
+                                                   ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "2651447188"
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button data-slot="button" className=... onClick={function onClick} children=...>
+                                                   ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "2651447188"
+ GET /dashboard/invoices/cmislgznn00034cvi8hoowj52 500 in 1018ms
+ GET /dashboard/invoices?_rsc=9gys7 200 in 1086ms
+ GET /favicon.ico 200 in 12ms
+ GET /dashboard/invoices?_rsc=9gys7 200 in 1043ms
+ GET /favicon.ico 200 in 8ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 348ms (1499 modules)
+ ✓ Compiled in 0ms (1048 modules)
+ ✓ Compiled in 0ms (1048 modules)
+ ✓ Compiled in 1ms (1048 modules)
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 844ms
+Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button data-slot="button" className=... onClick={function onClick} children=...>
+                                                   ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "2651447188"
+Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+TypeError: Cannot read properties of null (reading 'useContext')
+    at t.useContext (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:162241)
+    at usePathname (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/navigation.js:121:34)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:159:50)
+    at au (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:10446)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:15122
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at ab (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11808)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16871
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46505)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at ab (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11808)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16871
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:58612
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59270
+    at aN (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59278)
+    at Timeout._onTimeout (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6939)
+    at listOnTimeout (node:internal/timers:608:17)
+    at process.processTimers (node:internal/timers:543:7)
+ ⨯ Internal error: TypeError: Cannot read properties of null (reading 'useContext')
+    at t.useContext (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:162241)
+    at LinkComponent (./node_modules/next/dist/client/link.js:125:40)
+    at au (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:10446)
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:44746)
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46505)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at aC (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:52874)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50095)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42336
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42822)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at aC (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:52874)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50095)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42336
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42822)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at aC (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:52874)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50095)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42336
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42822)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50067)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:58612
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59270
+    at aN (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59278)
+    at Timeout._onTimeout (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6939)
+    at listOnTimeout (node:internal/timers:608:17)
+    at process.processTimers (node:internal/timers:543:7)
+digest: "4111088061"
+ ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+    at t.useContext (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:162241)
+    at usePathname (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/navigation.js:121:34)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:159:50)
+    at au (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:10446)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:15122
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at ab (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11808)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16871
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46505)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at ab (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11808)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16871
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:58612
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59270
+    at aN (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59278)
+    at Timeout._onTimeout (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6939)
+    at listOnTimeout (node:internal/timers:608:17)
+    at process.processTimers (node:internal/timers:543:7) {
+  page: '/dashboard/invoices/cmislgznn00034cvi8hoowj52'
+}
+ GET /dashboard/invoices?_rsc=9gys7 200 in 1728ms
+Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+TypeError: Cannot read properties of null (reading 'useContext')
+    at t.useContext (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:162241)
+    at usePathname (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/navigation.js:121:34)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:159:50)
+    at au (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:10446)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:15122
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at ab (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11808)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16871
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46505)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at ab (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11808)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16871
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:58612
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59270
+    at aN (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59278)
+    at Timeout._onTimeout (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6939)
+    at listOnTimeout (node:internal/timers:608:17)
+    at process.processTimers (node:internal/timers:543:7)
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button data-slot="button" className=... onClick={function onClick} children=...>
+                                                   ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "2651447188"
+ ⨯ Internal error: TypeError: Cannot read properties of null (reading 'useContext')
+    at t.useContext (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:162241)
+    at LinkComponent (./node_modules/next/dist/client/link.js:125:40)
+    at au (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:10446)
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:44746)
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46505)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at aC (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:52874)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50095)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42336
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42822)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at aC (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:52874)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50095)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42336
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42822)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at aC (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:52874)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50095)
+    at aj (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42336
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42822)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50067)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:58612
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59270
+    at aN (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59278)
+    at Timeout._onTimeout (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6939)
+    at listOnTimeout (node:internal/timers:608:17)
+    at process.processTimers (node:internal/timers:543:7)
+digest: "4111088061"
+ ○ Compiling /_error ...
+ ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+    at t.useContext (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:162241)
+    at usePathname (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/navigation.js:121:34)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:159:50)
+    at au (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:10446)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:15122
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at ab (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11808)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16871
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46505)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at ab (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11808)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16871
+    at aw (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at a_ (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:58612
+    at /Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59270
+    at aN (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59278)
+    at Timeout._onTimeout (/Users/akash/Downloads/HM-ERP/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6939)
+    at listOnTimeout (node:internal/timers:608:17)
+    at process.processTimers (node:internal/timers:543:7) {
+  page: '/dashboard/invoices/cmislgznn00034cvi8hoowj52'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /_error in 1053ms (1724 modules)
+ GET /dashboard/invoices/cmislgznn00034cvi8hoowj52 500 in 2531ms
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 775ms
+ GET /dashboard/invoices?_rsc=9gys7 200 in 1256ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button data-slot="button" className=... onClick={function onClick} children=...>
+                                                   ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "2651447188"
+ GET /dashboard/invoices/cmislgznn00034cvi8hoowj52?_rsc=90xdl 200 in 1424ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button data-slot="button" className=... onClick={function onClick} children=...>
+                                                   ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "2651447188"
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button data-slot="button" className=... onClick={function onClick} children=...>
+                                                   ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "2651447188"
+ GET /dashboard/invoices/cmislgznn00034cvi8hoowj52 500 in 1285ms
+ GET /dashboard/invoices/cmislgznn00034cvi8hoowj52?_rsc=90xdl 200 in 724ms
+ GET /favicon.ico 200 in 9ms
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 528ms
+ GET /favicon.ico 200 in 12ms
+ GET /dashboard/invoices?_rsc=9gys7 200 in 1464ms
+ GET /dashboard/invoices?_rsc=9gys7 200 in 764ms
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 2272ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 666ms (1716 modules)
+ GET /dashboard/invoices/cmislgznn00034cvi8hoowj52 200 in 408ms
+ GET /dashboard/orders/new?_rsc=1qr9p 200 in 524ms
+ GET /dashboard/invoices/cmislgznn00034cvi8hoowj52 200 in 1021ms
+ GET /favicon.ico 200 in 18ms
+ GET /dashboard/invoices?_rsc=9gys7 200 in 1543ms
+ GET /favicon.ico 200 in 36ms
+ GET /dashboard/invoices 200 in 1029ms
+ GET /favicon.ico 200 in 44ms
+ GET /dashboard/invoices 200 in 767ms
+ GET /favicon.ico 200 in 15ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1034ms (1107 modules)

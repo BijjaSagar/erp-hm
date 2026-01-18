@@ -8,6 +8,7 @@ import Link from "next/link";
 import { ArrowLeft, Printer, Download, IndianRupee } from "lucide-react";
 import { notFound } from "next/navigation";
 import UpdateStatusButton from "./update-status-button";
+import PrintButton from "./print-button";
 
 const statusColors: Record<string, string> = {
     DRAFT: "bg-gray-100 text-gray-800",
@@ -42,10 +43,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
                     </div>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => window.print()}>
-                        <Printer className="mr-2 h-4 w-4" />
-                        Print
-                    </Button>
+                    <PrintButton />
                     <UpdateStatusButton invoiceId={invoice.id} currentStatus={invoice.status} />
                 </div>
             </div>

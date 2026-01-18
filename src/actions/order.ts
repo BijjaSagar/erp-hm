@@ -25,22 +25,32 @@ async function generateOrderNumber(): Promise<string> {
     const today = new Date();
     const year = today.getFullYear().toString().slice(-2);
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const prefix = `ORD${year}${month}`;
 
-    // Get count of orders today
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
-
-    const count = await prisma.order.count({
+    // Get the highest order number with this prefix
+    const lastOrder = await prisma.order.findFirst({
         where: {
-            createdAt: {
-                gte: startOfDay,
-                lte: endOfDay,
+            orderNumber: {
+                startsWith: prefix,
             },
+        },
+        orderBy: {
+            orderNumber: 'desc',
+        },
+        select: {
+            orderNumber: true,
         },
     });
 
-    const sequence = (count + 1).toString().padStart(4, '0');
-    return `ORD${year}${month}${sequence}`;
+    let sequence = 1;
+    if (lastOrder) {
+        // Extract the sequence number from the last order
+        const lastSequence = parseInt(lastOrder.orderNumber.slice(-4));
+        sequence = lastSequence + 1;
+    }
+
+    const sequenceStr = sequence.toString().padStart(4, '0');
+    return `${prefix}${sequenceStr}`;
 }
 
 export async function createOrder(prevState: any, formData: FormData) {
@@ -48,14 +58,19 @@ export async function createOrder(prevState: any, formData: FormData) {
     if (!session) return { message: "Unauthorized" };
 
     try {
+        console.log("=== CREATE ORDER DEBUG ===");
         const customerName = formData.get("customerName") as string;
         const customerPhone = formData.get("customerPhone") as string;
         const customerAddress = formData.get("customerAddress") as string;
         const branchId = formData.get("branchId") as string;
 
+        console.log("Customer data:", { customerName, customerPhone, customerAddress, branchId });
+
         // Parse items from formData
         const itemsJson = formData.get("items") as string;
+        console.log("Items JSON:", itemsJson);
         const items = JSON.parse(itemsJson);
+        console.log("Parsed items:", items);
 
         // Validate
         const validated = orderSchema.parse({
@@ -65,9 +80,11 @@ export async function createOrder(prevState: any, formData: FormData) {
             branchId: branchId && branchId !== "none" ? branchId : undefined,
             items,
         });
+        console.log("Validation passed");
 
         // Generate order number
         const orderNumber = await generateOrderNumber();
+        console.log("Generated order number:", orderNumber);
 
         // Create order with items
         const order = await prisma.order.create({
@@ -87,6 +104,7 @@ export async function createOrder(prevState: any, formData: FormData) {
                 items: true,
             },
         });
+        console.log("Order created successfully:", order.id);
 
         revalidatePath("/dashboard/orders");
         return {
@@ -95,8 +113,12 @@ export async function createOrder(prevState: any, formData: FormData) {
             orderNumber: order.orderNumber
         };
     } catch (error) {
-        console.error("Error creating order:", error);
+        console.error("=== CREATE ORDER ERROR ===");
+        console.error("Error type:", error?.constructor?.name);
+        console.error("Error message:", error instanceof Error ? error.message : error);
+        console.error("Full error:", error);
         if (error instanceof z.ZodError) {
+            console.error("Zod validation errors:", error.issues);
             return { message: error.issues[0].message };
         }
         return { message: "Failed to create order" };

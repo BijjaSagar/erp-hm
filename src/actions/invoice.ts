@@ -154,6 +154,38 @@ export async function updateInvoiceStatus(id: string, status: string) {
     }
 }
 
+export async function updateInvoice(id: string, prevState: any, formData: FormData) {
+    const session = await auth();
+    if (!session) return { message: "Unauthorized" };
+
+    try {
+        const amount = parseFloat(formData.get("amount") as string);
+        const isGst = formData.get("isGst") === "true";
+
+        if (isNaN(amount) || amount <= 0) {
+            return { message: "Invalid amount" };
+        }
+
+        const gstAmount = isGst ? calculateGST(amount) : 0;
+
+        await prisma.invoice.update({
+            where: { id },
+            data: {
+                amount,
+                gstAmount,
+                isGst,
+            },
+        });
+
+        revalidatePath("/dashboard/invoices");
+        revalidatePath(`/dashboard/invoices/${id}`);
+        return { message: "Invoice updated successfully" };
+    } catch (error) {
+        console.error("Error updating invoice:", error);
+        return { message: "Failed to update invoice" };
+    }
+}
+
 export async function getCompletedOrdersWithoutInvoice() {
     try {
         const orders = await prisma.order.findMany({
@@ -178,3 +210,4 @@ export async function getCompletedOrdersWithoutInvoice() {
         return [];
     }
 }
+
