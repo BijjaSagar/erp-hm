@@ -4,133 +4,91 @@ description: Implementation plan for client-requested updates
 
 # Client Updates Implementation Plan
 
+Based on the PDF requirements, here are the changes needed:
+
 ## Overview
-This document outlines the implementation plan for the client-requested changes from updates (1).pdf.
+- Production partner manages HP1 and HP2 branches
+- Partner adds 9% margin to production cost
+- HP1 products → HM1 with 9% margin
+- HP2 products → HM2 with 9% margin
+- Coloring and plywood fitting done at HM1 (client's cost)
+- Partner = Manager role
 
-## 1. Marketing Head Panel (New Feature)
+## 1. MARKETING_HEAD Role Updates
 
-### Database Changes
-- [ ] Add MARKETING_HEAD role to Role enum
-- [ ] Create RawMaterial model for tracking raw materials
-- [ ] Create Seller model for tracking suppliers
-- [ ] Create RawMaterialPurchase model for purchase records
-- [ ] Create RawMaterialUsage model for tracking consumption
-- [ ] Create FinalProductSale model for sales records
+### Remove from Marketing Panel:
+- Raw materials
+- Sellers
+- Purchases
+- Material usage
+- Product sales
 
-### Backend Actions
-- [ ] Create actions for raw material CRUD operations
-- [ ] Create actions for seller CRUD operations
-- [ ] Create actions for purchase management
-- [ ] Create actions for usage tracking
-- [ ] Create actions for sales management
-- [ ] Create dashboard analytics for marketing head
+### Keep in Marketing Panel:
+- Marketing Dashboard
+- Orders
+- Customers (Party's)
+- Finished Goods (Stock)
+- Bills
 
-### Frontend Pages
-- [ ] Create Marketing Head dashboard (/dashboard/marketing)
-- [ ] Create Raw Materials page with inventory tracking
-- [ ] Create Sellers page for supplier management
-- [ ] Create Purchases page for purchase records
-- [ ] Create Usage page for consumption tracking
-- [ ] Create Sales page for final product sales
-- [ ] Add navigation menu items for Marketing Head role
+### Features:
+- View all finished goods (completed stock)
+- View customer (party) data
+- Partial payment reminders for Marketing Head and Admin
 
-## 2. Branch Name Changes
+## 2. ADMIN Role Updates
 
-### Database Migration
-- [ ] Update existing branch names: HM1, HM2, HP1, HP2
-- [ ] Update branch codes accordingly
+### Add to Admin Panel (moved from Marketing):
+- Raw Materials
+- Sellers
+- Purchases
+- Material usage
+- Product sales
 
-### Frontend Updates
-- [ ] Verify all branch references display correctly
-- [ ] Update any hardcoded branch names
+### New Features:
+- POS Contra Entry for banking cheques
 
-## 3. Production Stage Addition
+## 3. BRANCH_MANAGER Role Updates
 
-### Database Changes
-- [ ] Add PLYWOOD_FITTING to ProductionStage enum (after PAINTING)
-- [ ] Update production flow logic
+### Menu Items:
+- Dashboard
+- Employees
+- Raw Materials
+- Sellers
+- Material usage
+- Product sales
+- Production
+  - Operator dashboard
+  - Production reports
+  - Stock
 
-### Frontend Updates
-- [ ] Update production stage displays
-- [ ] Update operator dashboard to include new stage
-- [ ] Update order tracking to show new stage
+## Implementation Steps
 
-## 4. Bug Fixes
+### Step 1: Update Sidebar Routes
+- Remove marketing routes: raw-materials, sellers, purchases, usage, sales
+- Add these routes to ADMIN role
+- Add these routes to BRANCH_MANAGER role
+- Add "Customers" and "Finished Goods" to MARKETING_HEAD
+- Add "Bills" to MARKETING_HEAD
 
-### Orders Edit Option
-- [ ] Debug and fix orders edit functionality
-- [ ] Test edit form submission
-- [ ] Verify data persistence
+### Step 2: Create New Pages
+- `/dashboard/marketing/customers` - Customer (Party) management
+- `/dashboard/marketing/finished-goods` - Completed stock view
+- `/dashboard/marketing/bills` - Bills management
+- `/dashboard/pos/contra-entry` - Contra entry for banking cheques
 
-### Store Management Edit Option
-- [ ] Debug and fix store management edit functionality
-- [ ] Test edit form submission
-- [ ] Verify data persistence
+### Step 3: Update Existing Pages
+- Move marketing raw-materials, sellers, purchases, usage, sales to admin/manager access
+- Add partial payment reminder system
 
-### Finances and Invoices Action (Eye Icon)
-- [ ] Debug and fix invoice view action
-- [ ] Test invoice detail display
-- [ ] Verify data loading
+### Step 4: Database Updates
+- Add Customer/Party model if not exists
+- Add Bills model
+- Add ContraEntry model for POS
+- Add payment reminder tracking
 
-### Employee Attendance Check Out Button
-- [ ] Add check-out button to attendance interface
-- [ ] Implement check-out functionality
-- [ ] Update attendance records
-
-### Employee Delete Button
-- [ ] Add delete button to employee edit page
-- [ ] Implement delete functionality with confirmation
-- [ ] Handle cascading deletes properly
-
-### Operator Production Session - Material Selection
-- [ ] Debug material selection dropdown in end production session
-- [ ] Fix material options visibility
-- [ ] Test material consumption recording
-
-### Operator Dashboard Quick Actions
-- [ ] Debug and fix quick actions functionality
-- [ ] Test all quick action buttons
-- [ ] Verify navigation and actions
-
-### Settings Option in Menu
-- [ ] Debug and fix settings page
-- [ ] Implement settings functionality
-- [ ] Test settings persistence
-
-## Implementation Order
-
-1. **Phase 1: Critical Bug Fixes** (Immediate)
-   - Fix Orders edit option
-   - Fix Store management edit option
-   - Fix Finances/Invoices view action
-   - Fix Operator material selection issue
-   - Fix Quick Actions
-   - Fix Settings option
-
-2. **Phase 2: Minor Enhancements** (Quick wins)
-   - Add Employee check-out button
-   - Add Employee delete button
-   - Update branch names
-
-3. **Phase 3: Production Stage Addition** (Medium priority)
-   - Add PLYWOOD_FITTING stage
-   - Update all related UI components
-
-4. **Phase 4: Marketing Head Panel** (Major feature)
-   - Database schema updates
-   - Backend actions
-   - Frontend pages and navigation
-   - Testing and validation
-
-## Testing Checklist
-
-- [ ] All bug fixes verified and working
-- [ ] Branch names updated correctly
-- [ ] New production stage flows correctly
-- [ ] Marketing Head panel fully functional
-- [ ] All CRUD operations working
-- [ ] Data persistence verified
-- [ ] User permissions working correctly
-- [ ] Navigation and routing working
-- [ ] No console errors
-- [ ] Database migrations successful
+### Step 5: Create Server Actions
+- Customer CRUD operations
+- Finished goods queries
+- Bills management
+- Contra entry operations
+- Payment reminder queries
