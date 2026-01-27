@@ -57,7 +57,7 @@ export default async function AccountingDashboard() {
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <Link href="/dashboard/accounting/profit-loss">
+                    <Link href="/dashboard/accounting/pl-report">
                         <Badge variant="outline" className="cursor-pointer hover:bg-muted">
                             <BarChart3 className="h-3 w-3 mr-1" />
                             P&L Report

@@ -68,7 +68,7 @@ const routes = [
         icon: Factory,
         href: "/dashboard/production",
         color: "text-green-400",
-        roles: ["ADMIN", "PRODUCTION_SUPERVISOR"],
+        roles: ["ADMIN", "PRODUCTION_SUPERVISOR", "BRANCH_MANAGER"],
     },
     {
         name: "Finance & Invoices",
@@ -117,21 +117,21 @@ const routes = [
         href: "/dashboard/operator",
         icon: Wrench,
         color: "text-yellow-400",
-        roles: ["ADMIN", "OPERATOR", "PRODUCTION_SUPERVISOR"],
+        roles: ["ADMIN", "OPERATOR", "PRODUCTION_SUPERVISOR", "BRANCH_MANAGER"],
     },
     {
         name: "Stock",
         href: "/dashboard/stock",
         icon: ClipboardList,
         color: "text-teal-400",
-        roles: ["ADMIN", "OPERATOR", "PRODUCTION_SUPERVISOR"],
+        roles: ["ADMIN", "OPERATOR", "PRODUCTION_SUPERVISOR", "BRANCH_MANAGER"],
     },
     {
         name: "Production Reports",
         href: "/dashboard/reports/production",
         icon: FileText,
         color: "text-indigo-400",
-        roles: ["ADMIN", "PRODUCTION_SUPERVISOR"],
+        roles: ["ADMIN", "PRODUCTION_SUPERVISOR", "BRANCH_MANAGER"],
     },
     // Marketing Head Routes
     {
@@ -162,13 +162,7 @@ const routes = [
         color: "text-purple-400",
         roles: ["MARKETING_HEAD"],
     },
-    {
-        label: "Bills",
-        icon: FileText,
-        href: "/dashboard/marketing/bills",
-        color: "text-cyan-400",
-        roles: ["MARKETING_HEAD"],
-    },
+
     // Admin & Manager Routes - Raw Materials Management
     {
         label: "Raw Materials",
@@ -203,7 +197,14 @@ const routes = [
         icon: DollarSign,
         href: "/dashboard/sales",
         color: "text-green-400",
-        roles: ["ADMIN", "BRANCH_MANAGER"],
+        roles: ["ADMIN"],
+    },
+    {
+        label: "Bills",
+        icon: FileText,
+        href: "/dashboard/marketing/bills",
+        color: "text-cyan-400",
+        roles: ["ADMIN"],
     },
     {
         name: "Settings",
