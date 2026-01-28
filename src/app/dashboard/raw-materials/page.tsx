@@ -20,7 +20,7 @@ export default async function RawMaterialsPage() {
                         Manage your raw material inventory
                     </p>
                 </div>
-                <Link href="/dashboard/marketing/raw-materials/new">
+                <Link href="/dashboard/raw-materials/new">
                     <Button>
                         <Plus className="mr-2 h-4 w-4" />
                         Add Material
@@ -96,12 +96,12 @@ export default async function RawMaterialsPage() {
                                     </div>
                                 )}
                                 <div className="flex gap-2 pt-2">
-                                    <Link href={`/dashboard/marketing/raw-materials/${material.id}/edit`} className="flex-1">
+                                    <Link href={`/dashboard/raw-materials/${material.id}/edit`} className="flex-1">
                                         <Button variant="outline" size="sm" className="w-full">
                                             Edit
                                         </Button>
                                     </Link>
-                                    <Link href={`/dashboard/marketing/purchases/new?materialId=${material.id}`} className="flex-1">
+                                    <Link href={`/dashboard/purchases/new?materialId=${material.id}`} className="flex-1">
                                         <Button size="sm" className="w-full">
                                             Purchase
                                         </Button>
@@ -119,7 +119,7 @@ export default async function RawMaterialsPage() {
                         <Package className="h-12 w-12 text-muted-foreground mb-4" />
                         <h3 className="text-lg font-semibold mb-2">No raw materials yet</h3>
                         <p className="text-muted-foreground mb-4">Get started by adding your first raw material</p>
-                        <Link href="/dashboard/marketing/raw-materials/new">
+                        <Link href="/dashboard/raw-materials/new">
                             <Button>
                                 <Plus className="mr-2 h-4 w-4" />
                                 Add Material

@@ -19,14 +19,14 @@ export default function NewRawMaterialPage() {
 
     useEffect(() => {
         if (state.message && !state.message.includes("Failed")) {
-            router.push("/dashboard/marketing/raw-materials");
+            router.push("/dashboard/raw-materials");
         }
     }, [state.message, router]);
 
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/marketing/raw-materials">
+                <Link href="/dashboard/raw-materials">
                     <Button variant="ghost" size="icon">
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
@@ -120,7 +120,7 @@ export default function NewRawMaterialPage() {
 
                         <div className="flex gap-2">
                             <Button type="submit">Create Material</Button>
-                            <Link href="/dashboard/marketing/raw-materials">
+                            <Link href="/dashboard/raw-materials">
                                 <Button type="button" variant="outline">Cancel</Button>
                             </Link>
                         </div>

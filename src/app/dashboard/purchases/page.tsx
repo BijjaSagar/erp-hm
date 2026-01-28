@@ -20,7 +20,7 @@ export default async function PurchasesPage() {
                         Track all raw material purchases
                     </p>
                 </div>
-                <Link href="/dashboard/marketing/purchases/new">
+                <Link href="/dashboard/purchases/new">
                     <Button>
                         <Plus className="mr-2 h-4 w-4" />
                         Record Purchase
@@ -115,7 +115,7 @@ export default async function PurchasesPage() {
                             <ShoppingCart className="h-12 w-12 text-muted-foreground mb-4" />
                             <h3 className="text-lg font-semibold mb-2">No purchases yet</h3>
                             <p className="text-muted-foreground mb-4">Record your first purchase to get started</p>
-                            <Link href="/dashboard/marketing/purchases/new">
+                            <Link href="/dashboard/purchases/new">
                                 <Button>
                                     <Plus className="mr-2 h-4 w-4" />
                                     Record Purchase

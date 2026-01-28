@@ -34,7 +34,7 @@ export default function NewPurchasePage() {
 
     useEffect(() => {
         if (state.message && !state.message.includes("Failed")) {
-            router.push("/dashboard/marketing/purchases");
+            router.push("/dashboard/purchases");
         }
     }, [state.message, router]);
 
@@ -45,7 +45,7 @@ export default function NewPurchasePage() {
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/marketing/purchases">
+                <Link href="/dashboard/purchases">
                     <Button variant="ghost" size="icon">
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
@@ -220,7 +220,7 @@ export default function NewPurchasePage() {
 
                         <div className="flex gap-2">
                             <Button type="submit">Record Purchase</Button>
-                            <Link href="/dashboard/marketing/purchases">
+                            <Link href="/dashboard/purchases">
                                 <Button type="button" variant="outline">Cancel</Button>
                             </Link>
                         </div>

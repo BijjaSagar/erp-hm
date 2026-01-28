@@ -48,7 +48,7 @@ export default async function MarketingDashboard() {
             title: "Raw Materials",
             value: materialStats.totalMaterials,
             icon: Package,
-            href: "/dashboard/marketing/raw-materials",
+            href: "/dashboard/raw-materials",
             description: `${materialStats.lowStockCount} low stock`,
             trend: materialStats.lowStockCount > 0 ? "warning" : "success",
         },
@@ -56,7 +56,7 @@ export default async function MarketingDashboard() {
             title: "Active Sellers",
             value: sellerStats.activeSellers,
             icon: Users,
-            href: "/dashboard/marketing/sellers",
+            href: "/dashboard/sellers",
             description: `${sellerStats.totalSellers} total`,
             trend: "neutral",
         },
@@ -64,7 +64,7 @@ export default async function MarketingDashboard() {
             title: "Total Purchases",
             value: `₹${purchaseStats.totalValue.toLocaleString()}`,
             icon: ShoppingCart,
-            href: "/dashboard/marketing/purchases",
+            href: "/dashboard/purchases",
             description: `${purchaseStats.totalPurchases} transactions`,
             trend: "success",
         },
@@ -72,7 +72,7 @@ export default async function MarketingDashboard() {
             title: "Material Usage",
             value: usageStats.totalUsages,
             icon: TrendingDown,
-            href: "/dashboard/marketing/usage",
+            href: "/dashboard/usage",
             description: "Total usage records",
             trend: "neutral",
         },
@@ -80,7 +80,7 @@ export default async function MarketingDashboard() {
             title: "Total Sales",
             value: `₹${saleStats.totalRevenue.toLocaleString()}`,
             icon: DollarSign,
-            href: "/dashboard/marketing/sales",
+            href: "/dashboard/sales",
             description: `${saleStats.totalSales} transactions`,
             trend: "success",
         },
@@ -164,7 +164,7 @@ export default async function MarketingDashboard() {
                             </div>
                         </Link>
                         <Link
-                            href="/dashboard/marketing/raw-materials/new"
+                            href="/dashboard/raw-materials/new"
                             className="block p-3 rounded-lg hover:bg-accent transition-colors"
                         >
                             <div className="flex items-center gap-2">
@@ -173,7 +173,7 @@ export default async function MarketingDashboard() {
                             </div>
                         </Link>
                         <Link
-                            href="/dashboard/marketing/sellers/new"
+                            href="/dashboard/sellers/new"
                             className="block p-3 rounded-lg hover:bg-accent transition-colors"
                         >
                             <div className="flex items-center gap-2">
@@ -182,7 +182,7 @@ export default async function MarketingDashboard() {
                             </div>
                         </Link>
                         <Link
-                            href="/dashboard/marketing/purchases/new"
+                            href="/dashboard/purchases/new"
                             className="block p-3 rounded-lg hover:bg-accent transition-colors"
                         >
                             <div className="flex items-center gap-2">
@@ -191,7 +191,7 @@ export default async function MarketingDashboard() {
                             </div>
                         </Link>
                         <Link
-                            href="/dashboard/marketing/sales/new"
+                            href="/dashboard/sales/new"
                             className="block p-3 rounded-lg hover:bg-accent transition-colors"
                         >
                             <div className="flex items-center gap-2">
@@ -216,7 +216,7 @@ export default async function MarketingDashboard() {
                                     {materialStats.lowStockCount} material(s) need reordering
                                 </p>
                                 <Link
-                                    href="/dashboard/marketing/raw-materials?filter=low-stock"
+                                    href="/dashboard/raw-materials?filter=low-stock"
                                     className="text-sm text-blue-600 hover:underline"
                                 >
                                     View low stock items →

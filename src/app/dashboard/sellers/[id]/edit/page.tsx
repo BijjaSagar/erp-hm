@@ -31,7 +31,7 @@ export default function EditSellerPage({ params }: { params: { id: string } }) {
 
     useEffect(() => {
         if (state.message && !state.message.includes("Failed")) {
-            router.push("/dashboard/marketing/sellers");
+            router.push("/dashboard/sellers");
         }
     }, [state.message, router]);
 
@@ -40,7 +40,7 @@ export default function EditSellerPage({ params }: { params: { id: string } }) {
         setIsDeleting(true);
         const result = await deleteSeller(params.id);
         if (!result.message.includes("Failed")) {
-            router.push("/dashboard/marketing/sellers");
+            router.push("/dashboard/sellers");
         } else {
             alert(result.message);
             setIsDeleting(false);
@@ -52,7 +52,7 @@ export default function EditSellerPage({ params }: { params: { id: string } }) {
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/marketing/sellers">
+                <Link href="/dashboard/sellers">
                     <Button variant="ghost" size="icon">
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
@@ -160,7 +160,7 @@ export default function EditSellerPage({ params }: { params: { id: string } }) {
                                 {isDeleting ? "Deleting..." : "Delete"}
                             </Button>
                             <div className="flex gap-2">
-                                <Link href="/dashboard/marketing/sellers">
+                                <Link href="/dashboard/sellers">
                                     <Button type="button" variant="outline">Cancel</Button>
                                 </Link>
                                 <Button type="submit">Update Seller</Button>

@@ -20,14 +20,14 @@ export default function NewSellerPage() {
 
     useEffect(() => {
         if (state.message && !state.message.includes("Failed")) {
-            router.push("/dashboard/marketing/sellers");
+            router.push("/dashboard/sellers");
         }
     }, [state.message, router]);
 
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/marketing/sellers">
+                <Link href="/dashboard/sellers">
                     <Button variant="ghost" size="icon">
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
@@ -115,7 +115,7 @@ export default function NewSellerPage() {
 
                         <div className="flex gap-2">
                             <Button type="submit">Create Seller</Button>
-                            <Link href="/dashboard/marketing/sellers">
+                            <Link href="/dashboard/sellers">
                                 <Button type="button" variant="outline">Cancel</Button>
                             </Link>
                         </div>

@@ -29,7 +29,7 @@ export default function RecordUsagePage() {
 
     useEffect(() => {
         if (state.message && !state.message.includes("Failed") && !state.message.includes("Insufficient")) {
-            router.push("/dashboard/marketing/usage");
+            router.push("/dashboard/usage");
         }
     }, [state.message, router]);
 
@@ -39,7 +39,7 @@ export default function RecordUsagePage() {
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/marketing/usage">
+                <Link href="/dashboard/usage">
                     <Button variant="ghost" size="icon">
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
@@ -166,7 +166,7 @@ export default function RecordUsagePage() {
                             <Button type="submit" disabled={isInsufficient}>
                                 Record Usage
                             </Button>
-                            <Link href="/dashboard/marketing/usage">
+                            <Link href="/dashboard/usage">
                                 <Button type="button" variant="outline">Cancel</Button>
                             </Link>
                         </div>

@@ -22,7 +22,7 @@ export default async function ProductSalesPage() {
                         Track final product sales and payments
                     </p>
                 </div>
-                <Link href="/dashboard/marketing/sales/new">
+                <Link href="/dashboard/sales/new">
                     <Button>
                         <Plus className="mr-2 h-4 w-4" />
                         Record Sale
@@ -133,7 +133,7 @@ export default async function ProductSalesPage() {
                             <DollarSign className="h-12 w-12 text-muted-foreground mb-4" />
                             <h3 className="text-lg font-semibold mb-2">No sales yet</h3>
                             <p className="text-muted-foreground mb-4">Record your first product sale</p>
-                            <Link href="/dashboard/marketing/sales/new">
+                            <Link href="/dashboard/sales/new">
                                 <Button>
                                     <Plus className="mr-2 h-4 w-4" />
                                     Record Sale

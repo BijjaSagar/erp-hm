@@ -17,7 +17,7 @@ export default async function SellersPage() {
                         Manage your suppliers and vendors
                     </p>
                 </div>
-                <Link href="/dashboard/marketing/sellers/new">
+                <Link href="/dashboard/sellers/new">
                     <Button>
                         <Plus className="mr-2 h-4 w-4" />
                         Add Seller
@@ -63,7 +63,7 @@ export default async function SellersPage() {
                                     {seller._count.purchases} purchase{seller._count.purchases !== 1 ? 's' : ''}
                                 </p>
                             </div>
-                            <Link href={`/dashboard/marketing/sellers/${seller.id}/edit`}>
+                            <Link href={`/dashboard/sellers/${seller.id}/edit`}>
                                 <Button variant="outline" size="sm" className="w-full">
                                     Edit Seller
                                 </Button>
@@ -79,7 +79,7 @@ export default async function SellersPage() {
                         <Users className="h-12 w-12 text-muted-foreground mb-4" />
                         <h3 className="text-lg font-semibold mb-2">No sellers yet</h3>
                         <p className="text-muted-foreground mb-4">Add your first supplier to get started</p>
-                        <Link href="/dashboard/marketing/sellers/new">
+                        <Link href="/dashboard/sellers/new">
                             <Button>
                                 <Plus className="mr-2 h-4 w-4" />
                                 Add Seller

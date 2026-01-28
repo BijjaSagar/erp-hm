@@ -25,7 +25,7 @@ export default function EditRawMaterialPage({ params }: { params: { id: string }
 
     useEffect(() => {
         if (state.message && !state.message.includes("Failed")) {
-            router.push("/dashboard/marketing/raw-materials");
+            router.push("/dashboard/raw-materials");
         }
     }, [state.message, router]);
 
@@ -34,7 +34,7 @@ export default function EditRawMaterialPage({ params }: { params: { id: string }
         setIsDeleting(true);
         const result = await deleteRawMaterial(params.id);
         if (!result.message.includes("Failed")) {
-            router.push("/dashboard/marketing/raw-materials");
+            router.push("/dashboard/raw-materials");
         } else {
             alert(result.message);
             setIsDeleting(false);
@@ -46,7 +46,7 @@ export default function EditRawMaterialPage({ params }: { params: { id: string }
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/marketing/raw-materials">
+                <Link href="/dashboard/raw-materials">
                     <Button variant="ghost" size="icon">
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
@@ -148,7 +148,7 @@ export default function EditRawMaterialPage({ params }: { params: { id: string }
                                 {isDeleting ? "Deleting..." : "Delete"}
                             </Button>
                             <div className="flex gap-2">
-                                <Link href="/dashboard/marketing/raw-materials">
+                                <Link href="/dashboard/raw-materials">
                                     <Button type="button" variant="outline">Cancel</Button>
                                 </Link>
                                 <Button type="submit">Update Material</Button>

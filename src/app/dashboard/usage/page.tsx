@@ -23,7 +23,7 @@ export default async function MaterialUsagePage() {
                         Track raw material consumption
                     </p>
                 </div>
-                <Link href="/dashboard/marketing/usage/new">
+                <Link href="/dashboard/usage/new">
                     <Button>
                         <Plus className="mr-2 h-4 w-4" />
                         Record Usage
@@ -95,7 +95,7 @@ export default async function MaterialUsagePage() {
                             <TrendingDown className="h-12 w-12 text-muted-foreground mb-4" />
                             <h3 className="text-lg font-semibold mb-2">No usage records yet</h3>
                             <p className="text-muted-foreground mb-4">Start tracking material consumption</p>
-                            <Link href="/dashboard/marketing/usage/new">
+                            <Link href="/dashboard/usage/new">
                                 <Button>
                                     <Plus className="mr-2 h-4 w-4" />
                                     Record Usage
