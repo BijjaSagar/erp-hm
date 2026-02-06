@@ -4,9 +4,10 @@ import { db } from "@/lib/db";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download, Printer } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BillActions } from "./bill-actions";
 
 export default async function BillDetailPage({ params }: { params: { id: string } }) {
     const session = await auth();
@@ -55,16 +56,7 @@ export default async function BillDetailPage({ params }: { params: { id: string 
                         </p>
                     </div>
                 </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => window.print()}>
-                        <Printer className="h-4 w-4 mr-2" />
-                        Print
-                    </Button>
-                    <Button variant="outline">
-                        <Download className="h-4 w-4 mr-2" />
-                        Download PDF
-                    </Button>
-                </div>
+                <BillActions billId={bill.id} />
             </div>
 
             {/* Bill Information */}
