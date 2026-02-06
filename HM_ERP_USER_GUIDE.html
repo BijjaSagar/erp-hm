@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HM ERP - Complete User Guide</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+        }
+        
+        .cover-page {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            page-break-after: always;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .cover-page h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .cover-page h2 {
+            font-size: 32px;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+        
+        .cover-page .subtitle {
+            font-size: 20px;
+            margin-bottom: 60px;
+            opacity: 0.9;
+        }
+        
+        .company-info {
+            margin-top: 80px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .company-info h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .company-info p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        h1 {
+            color: #1e3a8a;
+            font-size: 36px;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3b82f6;
+            page-break-before: always;
+        }
+        
+        h2 {
+            color: #2563eb;
+            font-size: 28px;
+            margin: 30px 0 15px 0;
+            padding-left: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        h3 {
+            color: #1e40af;
+            font-size: 22px;
+            margin: 25px 0 12px 0;
+        }
+        
+        h4 {
+            color: #1e40af;
+            font-size: 18px;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin: 12px 0;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .feature-box {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .workflow-step {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            position: relative;
+            padding-left: 50px;
+        }
+        
+        .workflow-step::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            background: #3b82f6;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .role-badge {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin: 5px 5px 5px 0;
+        }
+        
+        .module-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .module-card h3 {
+            color: #1e3a8a;
+            margin-top: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: #1e3a8a;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        
+        .note {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .note strong {
+            color: #92400e;
+        }
+        
+        .toc {
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        
+        .toc h2 {
+            border: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .toc li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .toc a {
+            color: #1e3a8a;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            color: #3b82f6;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-size: 14px;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 40px;
+        }
+        
+        @media print {
+            .workflow-step {
+                page-break-inside: avoid;
+            }
+            
+            .module-card {
+                page-break-inside: avoid;
+            }
+            
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cover Page -->
+    <div class="cover-page">
+        <h1>HM ERP SYSTEM</h1>
+        <h2>Complete User Guide</h2>
+        <p class="subtitle">Manufacturing & Retail Management Solution</p>
+        
+        <div class="company-info">
+            <h3>R H Technology</h3>
+            <p>📞 Contact: 8983839143</p>
+            <p>📅 Version: 2.0 | February 2026</p>
+        </div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="content">
+        <div class="toc">
+            <h2>📋 Table of Contents</h2>
+            <ul>
+                <li><a href="#introduction">1. Introduction</a></li>
+                <li><a href="#getting-started">2. Getting Started</a></li>
+                <li><a href="#user-roles">3. User Roles & Permissions</a></li>
+                <li><a href="#admin-module">4. Admin Module</a></li>
+                <li><a href="#production-module">5. Production Module</a></li>
+                <li><a href="#marketing-module">6. Marketing Module</a></li>
+                <li><a href="#store-pos">7. Store & POS Module</a></li>
+                <li><a href="#accounting">8. Accounting & Finance</a></li>
+                <li><a href="#workflows">9. Complete Workflows</a></li>
+                <li><a href="#troubleshooting">10. Troubleshooting</a></li>
+            </ul>
+        </div>
+
+        <!-- Introduction -->
+        <h1 id="introduction">1. Introduction</h1>
+        
+        <h2>1.1 About HM ERP</h2>
+        <p>HM ERP is a comprehensive Enterprise Resource Planning system designed specifically for manufacturing and retail businesses. It integrates all aspects of your business operations from production to sales, providing real-time visibility and control.</p>
+        
+        <div class="feature-box">
+            <h3>Key Features</h3>
+            <ul>
+                <li><strong>Production Management:</strong> Track orders through multiple production stages</li>
+                <li><strong>Inventory Control:</strong> Manage raw materials and finished goods</li>
+                <li><strong>Point of Sale (POS):</strong> Retail sales and customer management</li>
+                <li><strong>Financial Tracking:</strong> Comprehensive accounting and reporting</li>
+                <li><strong>Employee Management:</strong> Attendance, production tracking, and performance</li>
+                <li><strong>Multi-Branch Support:</strong> Manage multiple locations from one system</li>
+                <li><strong>Real-time Reporting:</strong> Instant insights into business performance</li>
+            </ul>
+        </div>
+
+        <h2>1.2 System Architecture</h2>
+        <p>The system is built on modern cloud technology, ensuring:</p>
+        <ul>
+            <li>24/7 availability from anywhere</li>
+            <li>Automatic backups and data security</li>
+            <li>Scalability as your business grows</li>
+            <li>Mobile-responsive design for on-the-go access</li>
+        </ul>
+
+        <!-- Getting Started -->
+        <h1 id="getting-started">2. Getting Started</h1>
+        
+        <h2>2.1 Accessing the System</h2>
+        <div class="workflow-step" data-step="1">
+            <h4>Open Your Web Browser</h4>
+            <p>Navigate to: <strong>https://erp-hm.vercel.app</strong></p>
+        </div>
+        
+        <div class="workflow-step" data-step="2">
+            <h4>Login</h4>
+            <p>Enter your credentials:</p>
+            <ul>
+                <li><strong>Email:</strong> Your assigned email address</li>
+                <li><strong>Password:</strong> Your secure password</li>
+            </ul>
+        </div>
+        
+        <div class="workflow-step" data-step="3">
+            <h4>Dashboard Access</h4>
+            <p>Upon successful login, you'll be directed to your role-specific dashboard.</p>
+        </div>
+
+        <h2>2.2 Navigation</h2>
+        <p>The system uses a sidebar navigation menu on the left side. Your menu items will vary based on your role and permissions.</p>
+
+        <!-- User Roles -->
+        <h1 id="user-roles">3. User Roles & Permissions</h1>
+        
+        <h2>3.1 Role Overview</h2>
+        <p>The system supports 7 different user roles, each with specific permissions and access levels:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Role</th>
+                    <th>Primary Responsibilities</th>
+                    <th>Access Level</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>ADMIN</strong></td>
+                    <td>Complete system control, user management, all modules</td>
+                    <td>Full Access</td>
+                </tr>
+                <tr>
+                    <td><strong>BRANCH_MANAGER</strong></td>
+                    <td>Branch operations, employee management, production oversight</td>
+                    <td>Branch-Level</td>
+                </tr>
+                <tr>
+                    <td><strong>PRODUCTION_SUPERVISOR</strong></td>
+                    <td>Production monitoring, quality control, machine management</td>
+                    <td>Production-Level</td>
+                </tr>
+                <tr>
+                    <td><strong>OPERATOR</strong></td>
+                    <td>Production execution, attendance, machine operation</td>
+                    <td>Operator-Level</td>
+                </tr>
+                <tr>
+                    <td><strong>MARKETING_HEAD</strong></td>
+                    <td>Customer management, orders, finished goods, sales</td>
+                    <td>Marketing-Level</td>
+                </tr>
+                <tr>
+                    <td><strong>STORE_MANAGER</strong></td>
+                    <td>Store operations, POS, inventory, customer sales</td>
+                    <td>Store-Level</td>
+                </tr>
+                <tr>
+                    <td><strong>ACCOUNTANT</strong></td>
+                    <td>Financial records, invoicing, reports, accounting</td>
+                    <td>Finance-Level</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Admin Module -->
+        <h1 id="admin-module">4. Admin Module</h1>
+        
+        <h2>4.1 Branch Management</h2>
+        
+        <div class="module-card">
+            <h3>Creating a New Branch</h3>
+            <div class="workflow-step" data-step="1">
+                <p>Navigate to <strong>Branch Management</strong> from the sidebar</p>
+            </div>
+            <div class="workflow-step" data-step="2">
+                <p>Click <strong>"Add New Branch"</strong> button</p>
+            </div>
+            <div class="workflow-step" data-step="3">
+                <p>Fill in branch details:</p>
+                <ul>
+                    <li>Branch Name</li>
+                    <li>Branch Code (unique identifier)</li>
+                    <li>Address</li>
+                </ul>
+            </div>
+            <div class="workflow-step" data-step="4">
+                <p>Click <strong>"Create Branch"</strong> to save</p>
+            </div>
+        </div>
+
+        <h2>4.2 Employee Management</h2>
+        
+        <div class="module-card">
+            <h3>Adding New Employees</h3>
+            <div class="workflow-step" data-step="1">
+                <p>Go to <strong>Employees</strong> section</p>
+            </div>
+            <div class="workflow-step" data-step="2">
+                <p>Click <strong>"Add Employee"</strong></p>
+            </div>
+            <div class="workflow-step" data-step="3">
+                <p>Enter employee information:</p>
+                <ul>
+                    <li>Full Name</li>
+                    <li>Designation</li>
+                    <li>Phone Number</li>
+                    <li>Branch Assignment</li>
+                    <li>Department (if applicable)</li>
+                </ul>
+            </div>
+            <div class="workflow-step" data-step="4">
+                <p>Save employee record</p>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>Note:</strong> Employees can be deleted even if they have related records (attendance, production logs, etc.). The system will automatically handle cascading deletions.
+        </div>
+
+        <h2>4.3 User Account Creation</h2>
+        <p>To create login credentials for employees:</p>
+        <ol>
+            <li>Go to <strong>Settings → User Management</strong></li>
+            <li>Select an employee from the list</li>
+            <li>Assign a role (OPERATOR, SUPERVISOR, etc.)</li>
+            <li>Set email and password</li>
+            <li>Save user account</li>
+        </ol>
+
+        <!-- Production Module -->
+        <h1 id="production-module">5. Production Module</h1>
+        
+        <h2>5.1 Production Stages</h2>
+        <p>The system tracks products through the following stages:</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Stage</th>
+                    <th>Description</th>
+                    <th>Typical Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>PENDING</td>
+                    <td>Order received, awaiting approval</td>
+                    <td>1-2 days</td>
+                </tr>
+                <tr>
+                    <td>CUTTING</td>
+                    <td>Raw material cutting and preparation</td>
+                    <td>1-2 days</td>
+                </tr>
+                <tr>
+                    <td>SHAPING</td>
+                    <td>Forming and shaping components</td>
+                    <td>1-2 days</td>
+                </tr>
+                <tr>
+                    <td>BENDING</td>
+                    <td>Bending metal sheets as required</td>
+                    <td>1 day</td>
+                </tr>
+                <tr>
+                    <td>WELDING_INNER</td>
+                    <td>Internal welding work</td>
+                    <td>2-3 days</td>
+                </tr>
+                <tr>
+                    <td>WELDING_OUTER</td>
+                    <td>External welding and assembly</td>
+                    <td>2-3 days</td>
+                </tr>
+                <tr>
+                    <td>GRINDING</td>
+                    <td>Surface finishing and smoothing</td>
+                    <td>1-2 days</td>
+                </tr>
+                <tr>
+                    <td>FINISHING</td>
+                    <td>Final touches and quality check</td>
+                    <td>1 day</td>
+                </tr>
+                <tr>
+                    <td>PAINTING</td>
+                    <td>Paint application and drying</td>
+                    <td>2-3 days</td>
+                </tr>
+                <tr>
+                    <td>PLYWOOD_FITTING</td>
+                    <td>Plywood installation (if applicable)</td>
+                    <td>1 day</td>
+                </tr>
+                <tr>
+                    <td>COMPLETED</td>
+                    <td>Ready for delivery</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>5.2 Order Management Workflow</h2>
+        
+        <div class="module-card">
+            <h3>Creating a New Order</h3>
+            <div class="workflow-step" data-step="1">
+                <h4>Navigate to Orders</h4>
+                <p>Click <strong>Orders</strong> in the sidebar</p>
+            </div>
+            
+            <div class="workflow-step" data-step="2">
+                <h4>Create New Order</h4>
+                <p>Click <strong>"New Order"</strong> button</p>
+            </div>
+            
+            <div class="workflow-step" data-step="3">
+                <h4>Enter Order Details</h4>
+                <ul>
+                    <li>Customer Name</li>
+                    <li>Customer Phone</li>
+                    <li>Customer Address</li>
+                    <li>Branch (if multi-branch)</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-step" data-step="4">
+                <h4>Add Order Items</h4>
+                <p>For each product in the order:</p>
+                <ul>
+                    <li>Product Name</li>
+                    <li>Quantity</li>
+                    <li>Dimensions (if applicable)</li>
+                    <li>Material specifications</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-step" data-step="5">
+                <h4>Save Order</h4>
+                <p>Order is created with status <strong>PENDING</strong></p>
+            </div>
+        </div>
+
+        <h2>5.3 Order Approval Process</h2>
+        <p>For ADMIN and PRODUCTION_SUPERVISOR roles:</p>
+        
+        <div class="workflow-step" data-step="1">
+            <p>Go to <strong>Production → Approvals</strong></p>
+        </div>
+        
+        <div class="workflow-step" data-step="2">
+            <p>Review pending orders</p>
+        </div>
+        
+        <div class="workflow-step" data-step="3">
+            <p>Click <strong>"Approve"</strong> to move order to production</p>
+            <p>Order status changes to <strong>APPROVED</strong> and <strong>IN_PRODUCTION</strong></p>
+        </div>
+
+        <h2>5.4 Production Tracking (Operator Dashboard)</h2>
+        
+        <div class="module-card">
+            <h3>Recording Production Work</h3>
+            <div class="workflow-step" data-step="1">
+                <h4>Check In</h4>
+                <p>Operators must check in at the start of their shift via <strong>Attendance</strong></p>
+            </div>
+            
+            <div class="workflow-step" data-step="2">
+                <h4>Start Production</h4>
+                <p>From <strong>Operator Dashboard</strong>:</p>
+                <ul>
+                    <li>Select the order to work on</li>
+                    <li>Select production stage</li>
+                    <li>Select machine</li>
+                    <li>Click <strong>"Start Production"</strong></li>
+                </ul>
+            </div>
+            
+            <div class="workflow-step" data-step="3">
+                <h4>Record Progress</h4>
+                <p>During production, record:</p>
+                <ul>
+                    <li>Input Quantity (units received)</li>
+                    <li>Output Quantity (units produced)</li>
+                    <li>Rejected Quantity (defects)</li>
+                    <li>Wastage (scrap material)</li>
+                    <li>Materials Used</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-step" data-step="4">
+                <h4>Complete Stage</h4>
+                <p>Click <strong>"Complete"</strong> when stage is finished</p>
+                <p>Order automatically moves to next stage</p>
+            </div>
+        </div>
+
+        <h2>5.5 Machine Management</h2>
+        <p>Track machine status and maintenance:</p>
+        
+        <div class="workflow-step" data-step="1">
+            <p>Go to <strong>Machines</strong> section</p>
+        </div>
+        
+        <div class="workflow-step" data-step="2">
+            <p>View machine list with current status:</p>
+            <ul>
+                <li><span style="color: green;">●</span> OPERATIONAL - Working normally</li>
+                <li><span style="color: orange;">●</span> STUCK - Minor issue</li>
+                <li><span style="color: red;">●</span> MAINTENANCE - Under maintenance</li>
+                <li><span style="color: darkred;">●</span> BREAKDOWN - Not operational</li>
+            </ul>
+        </div>
+        
+        <div class="workflow-step" data-step="3">
+            <p>Report issues by clicking <strong>"Report Issue"</strong></p>
+        </div>
+
+        <!-- Marketing Module -->
+        <h1 id="marketing-module">6. Marketing Module</h1>
+        
+        <h2>6.1 Customer Management</h2>
+        
+        <div class="module-card">
+            <h3>Adding New Customers</h3>
+            <div class="workflow-step" data-step="1">
+                <p>Navigate to <strong>Marketing → Customers (Party's)</strong></p>
+            </div>
+            
+            <div class="workflow-step" data-step="2">
+                <p>Click <strong>"Add New Customer"</strong></p>
+            </div>
+            
+            <div class="workflow-step" data-step="3">
+                <p>Enter customer information:</p>
+                <ul>
+                    <li>Customer Name (required)</li>
+                    <li>Phone Number (optional, can be duplicate)</li>
+                    <li>Email (optional)</li>
+                    <li>Address</li>
+                    <li>GST Number (for business customers)</li>
+                    <li>Customer Type: RETAIL, REGULAR, or WHOLESALE</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-step" data-step="4">
+                <p>Click <strong>"Create Customer"</strong></p>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>Note:</strong> Multiple customers can have the same phone number or no phone number. The system no longer enforces unique phone numbers.
+        </div>
+
+        <h2>6.2 Raw Material Management</h2>
+        
+        <h3>6.2.1 Managing Sellers</h3>
+        <div class="workflow-step" data-step="1">
+            <p>Go to <strong>Sellers</strong></p>
+        </div>
+        
+        <div class="workflow-step" data-step="2">
+            <p>Add seller details:</p>
+            <ul>
+                <li>Seller Name</li>
+                <li>Contact Person</li>
+                <li>Phone & Email</li>
+                <li>Address</li>
+                <li>GST Number</li>
+            </ul>
+        </div>
+
+        <h3>6.2.2 Recording Purchases</h3>
+        <div class="module-card">
+            <h3>Purchase Entry Workflow</h3>
+            <div class="workflow-step" data-step="1">
+                <p>Navigate to <strong>Purchases</strong></p>
+            </div>
+            
+            <div class="workflow-step" data-step="2">
+                <p>Click <strong>"Record Purchase"</strong></p>
+            </div>
+            
+            <div class="workflow-step" data-step="3">
+                <p>Select seller and material</p>
+            </div>
+            
+            <div class="workflow-step" data-step="4">
+                <p>Enter purchase details:</p>
+                <ul>
+                    <li>Quantity</li>
+                    <li>Unit (kg, pieces, liters, etc.)</li>
+                    <li>Price per Unit</li>
+                    <li>Transportation Cost</li>
+                    <li>Bill Number & Date</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-step" data-step="5">
+                <p>System automatically calculates total and updates inventory</p>
+            </div>
+        </div>
+
+        <h2>6.3 Finished Goods Management</h2>
+        <p>Track completed products ready for sale:</p>
+        
+        <div class="workflow-step" data-step="1">
+            <p>Go to <strong>Marketing → Finished Goods</strong></p>
+        </div>
+        
+        <div class="workflow-step" data-step="2">
+            <p>View inventory of completed products</p>
+        </div>
+        
+        <div class="workflow-step" data-step="3">
+            <p>Transfer to stores using <strong>Stock Transfers</strong></p>
+        </div>
+
+        <!-- Store & POS Module -->
+        <h1 id="store-pos">7. Store & POS Module</h1>
+        
+        <h2>7.1 Store Setup</h2>
+        
+        <div class="module-card">
+            <h3>Creating a New Store</h3>
+            <div class="workflow-step" data-step="1">
+                <p>Navigate to <strong>Stores</strong> (Admin only)</p>
+            </div>
+            
+            <div class="workflow-step" data-step="2">
+                <p>Click <strong>"Add New Store"</strong></p>
+            </div>
+            
+            <div class="workflow-step" data-step="3">
+                <p>Enter store details:</p>
+                <ul>
+                    <li>Store Name</li>
+                    <li>Store Code (unique)</li>
+                    <li>Address</li>
+                    <li>Phone & Email</li>
+                    <li>GST Number</li>
+                    <li>Assign Store Manager</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>7.2 Stock Transfer</h2>
+        
+        <div class="module-card">
+            <h3>Transferring Stock from Production to Store</h3>
+            <div class="workflow-step" data-step="1">
+                <p>Go to <strong>Stock Transfers</strong></p>
+            </div>
+            
+            <div class="workflow-step" data-step="2">
+                <p>Click <strong>"New Transfer"</strong></p>
+            </div>
+            
+            <div class="workflow-step" data-step="3">
+                <p>Select transfer type:</p>
+                <ul>
+                    <li><strong>PRODUCTION</strong> - From factory to store</li>
+                    <li><strong>STORE</strong> - Between stores</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-step" data-step="4">
+                <p>Select source and destination</p>
+            </div>
+            
+            <div class="workflow-step" data-step="5">
+                <p>Add items to transfer with quantities</p>
+            </div>
+            
+            <div class="workflow-step" data-step="6">
+                <p>Submit transfer (status: PENDING)</p>
+            </div>
+            
+            <div class="workflow-step" data-step="7">
+                <p>Store manager receives and confirms (status: RECEIVED)</p>
+            </div>
+        </div>
+
+        <h2>7.3 Point of Sale (POS)</h2>
+        
+        <div class="module-card">
+            <h3>Making a Sale</h3>
+            <div class="workflow-step" data-step="1">
+                <h4>Access POS</h4>
+                <p>Navigate to <strong>POS</strong> from sidebar</p>
+            </div>
+            
+            <div class="workflow-step" data-step="2">
+                <h4>Select/Add Customer</h4>
+                <p>Search for existing customer or create walk-in sale</p>
+            </div>
+            
+            <div class="workflow-step" data-step="3">
+                <h4>Add Products</h4>
+                <p>Scan or search for products and add to cart:</p>
+                <ul>
+                    <li>Select product from inventory</li>
+                    <li>Enter quantity</li>
+                    <li>Apply discounts if needed</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-step" data-step="4">
+                <h4>Review Cart</h4>
+                <p>System shows:</p>
+                <ul>
+                    <li>Subtotal</li>
+                    <li>Discount</li>
+                    <li>Tax Amount</li>
+                    <li>Total Amount</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-step" data-step="5">
+                <h4>Process Payment</h4>
+                <p>Select payment method:</p>
+                <ul>
+                    <li>CASH</li>
+                    <li>CARD</li>
+                    <li>UPI</li>
+                    <li>MIXED (multiple methods)</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-step" data-step="6">
+                <h4>Complete Sale</h4>
+                <p>System generates bill number and updates inventory</p>
+                <p>Print receipt for customer</p>
+            </div>
+        </div>
+
+        <h2>7.4 Bills Management</h2>
+        <p>View and manage all sales bills:</p>
+        
+        <div class="workflow-step" data-step="1">
+            <p>Navigate to <strong>Bills</strong> (Admin/Marketing Head)</p>
+        </div>
+        
+        <div class="workflow-step" data-step="2">
+            <p>View all transactions with filters:</p>
+            <ul>
+                <li>Date range</li>
+                <li>Payment status</li>
+                <li>Store</li>
+                <li>Customer</li>
+            </ul>
+        </div>
+        
+        <div class="workflow-step" data-step="3">
+            <p>View detailed bill information</p>
+        </div>
+        
+        <div class="workflow-step" data-step="4">
+            <p>Download/Print bills as needed</p>
+        </div>
+
+        <!-- Accounting Module -->
+        <h1 id="accounting">8. Accounting & Finance</h1>
+        
+        <h2>8.1 Financial Dashboard</h2>
+        <p>Access comprehensive financial overview:</p>
+        
+        <div class="workflow-step" data-step="1">
+            <p>Navigate to <strong>Accounting</strong></p>
+        </div>
+        
+        <div class="workflow-step" data-step="2">
+            <p>View key metrics:</p>
+            <ul>
+                <li>Total Revenue</li>
+                <li>Total Expenses</li>
+                <li>Net Profit/Loss</li>
+                <li>Outstanding Payments</li>
+            </ul>
+        </div>
+        
+        <div class="workflow-step" data-step="3">
+            <p>Analyze trends:</p>
+            <ul>
+                <li>Revenue trends (monthly/yearly)</li>
+                <li>Expense breakdown by category</li>
+                <li>Top revenue products</li>
+                <li>Cash flow summary</li>
+            </ul>
+        </div>
+
+        <h2>8.2 Invoicing</h2>
+        
+        <div class="module-card">
+            <h3>Creating Invoices</h3>
+            <div class="workflow-step" data-step="1">
+                <p>Go to <strong>Finance & Invoices</strong></p>
+            </div>
+            
+            <div class="workflow-step" data-step="2">
+                <p>Click <strong>"New Invoice"</strong></p>
+            </div>
+            
+            <div class="workflow-step" data-step="3">
+                <p>Select order or create custom invoice</p>
+            </div>
+            
+            <div class="workflow-step" data-step="4">
+                <p>Enter invoice details:</p>
+                <ul>
+                    <li>Amount</li>
+                    <li>GST (if applicable)</li>
+                    <li>Payment terms</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-step" data-step="5">
+                <p>Generate and send invoice</p>
+            </div>
+        </div>
+
+        <h2>8.3 Reports</h2>
+        <p>Generate various financial reports:</p>
+        
+        <h3>8.3.1 Profit & Loss Report</h3>
+        <div class="workflow-step" data-step="1">
+            <p>Navigate to <strong>Accounting → P&L Report</strong></p>
+        </div>
+        
+        <div class="workflow-step" data-step="2">
+            <p>Select date range</p>
+        </div>
+        
+        <div class="workflow-step" data-step="3">
+            <p>View comprehensive P&L statement</p>
+        </div>
+
+        <h3>8.3.2 Tax Reports</h3>
+        <div class="workflow-step" data-step="1">
+            <p>Go to <strong>Accounting → Tax Reports</strong></p>
+        </div>
+        
+        <div class="workflow-step" data-step="2">
+            <p>Generate GST reports for filing</p>
+        </div>
+
+        <!-- Complete Workflows -->
+        <h1 id="workflows">9. Complete Workflows</h1>
+        
+        <h2>9.1 End-to-End Order Fulfillment</h2>
+        
+        <div class="feature-box">
+            <h3>Complete Order Journey</h3>
+            
+            <div class="workflow-step" data-step="1">
+                <h4>Order Creation</h4>
+                <p><strong>Role:</strong> ORDER_TAKER / MARKETING_HEAD</p>
+                <p>Customer places order → System creates order with PENDING status</p>
+            </div>
+            
+            <div class="workflow-step" data-step="2">
+                <h4>Order Approval</h4>
+                <p><strong>Role:</strong> ADMIN / PRODUCTION_SUPERVISOR</p>
+                <p>Review order → Approve → Status: APPROVED, IN_PRODUCTION</p>
+            </div>
+            
+            <div class="workflow-step" data-step="3">
+                <h4>Production - Stage 1: Cutting</h4>
+                <p><strong>Role:</strong> OPERATOR</p>
+                <p>Operator selects order → Performs cutting → Records output</p>
+            </div>
+            
+            <div class="workflow-step" data-step="4">
+                <h4>Production - Stages 2-9</h4>
+                <p><strong>Role:</strong> OPERATOR</p>
+                <p>Order moves through: Shaping → Bending → Welding → Grinding → Finishing → Painting</p>
+            </div>
+            
+            <div class="workflow-step" data-step="5">
+                <h4>Quality Check</h4>
+                <p><strong>Role:</strong> PRODUCTION_SUPERVISOR</p>
+                <p>Final inspection → Approve quality → Status: COMPLETED</p>
+            </div>
+            
+            <div class="workflow-step" data-step="6">
+                <h4>Stock Transfer</h4>
+                <p><strong>Role:</strong> ADMIN / PRODUCTION_SUPERVISOR</p>
+                <p>Transfer to store → Store receives inventory</p>
+            </div>
+            
+            <div class="workflow-step" data-step="7">
+                <h4>Sale & Delivery</h4>
+                <p><strong>Role:</strong> STORE_MANAGER</p>
+                <p>Process POS sale → Generate bill → Status: DELIVERED</p>
+            </div>
+            
+            <div class="workflow-step" data-step="8">
+                <h4>Invoicing & Payment</h4>
+                <p><strong>Role:</strong> ACCOUNTANT</p>
+                <p>Generate invoice → Record payment → Update accounts</p>
+            </div>
+        </div>
+
+        <h2>9.2 Daily Operations Workflow</h2>
+        
+        <h3>9.2.1 Operator Daily Routine</h3>
+        <ol>
+            <li><strong>Morning:</strong>
+                <ul>
+                    <li>Check in via Attendance system</li>
+                    <li>Review assigned orders</li>
+                    <li>Check machine status</li>
+                </ul>
+            </li>
+            <li><strong>During Shift:</strong>
+                <ul>
+                    <li>Start production on assigned orders</li>
+                    <li>Record production progress</li>
+                    <li>Log material usage</li>
+                    <li>Report any issues or wastage</li>
+                    <li>Take breaks (system tracks break time)</li>
+                </ul>
+            </li>
+            <li><strong>End of Shift:</strong>
+                <ul>
+                    <li>Complete pending production entries</li>
+                    <li>Check out via Attendance</li>
+                    <li>Hand over to next shift (if applicable)</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>9.2.2 Store Manager Daily Routine</h3>
+        <ol>
+            <li><strong>Opening:</strong>
+                <ul>
+                    <li>Check inventory levels</li>
+                    <li>Review pending stock transfers</li>
+                    <li>Prepare POS system</li>
+                </ul>
+            </li>
+            <li><strong>During Day:</strong>
+                <ul>
+                    <li>Process customer sales via POS</li>
+                    <li>Receive stock transfers</li>
+                    <li>Handle customer queries</li>
+                    <li>Monitor inventory</li>
+                </ul>
+            </li>
+            <li><strong>Closing:</strong>
+                <ul>
+                    <li>Reconcile cash/payments</li>
+                    <li>Review daily sales</li>
+                    <li>Update low stock items</li>
+                    <li>Generate daily report</li>
+                </ul>
+            </li>
+        </ol>
+
+        <!-- Troubleshooting -->
+        <h1 id="troubleshooting">10. Troubleshooting</h1>
+        
+        <h2>10.1 Common Issues & Solutions</h2>
+        
+        <div class="module-card">
+            <h3>Issue: Cannot Delete Employee</h3>
+            <p><strong>Solution:</strong> This issue has been fixed. Employees can now be deleted even if they have related records (attendance, production logs, etc.). The system automatically handles cascading deletions.</p>
+        </div>
+
+        <div class="module-card">
+            <h3>Issue: Customer Creation Fails</h3>
+            <p><strong>Solution:</strong> This issue has been fixed. Multiple customers can now have the same phone number or no phone number. The unique constraint has been removed.</p>
+        </div>
+
+        <div class="module-card">
+            <h3>Issue: Bills Page Shows Dashboard</h3>
+            <p><strong>Solution:</strong> This issue has been fixed. ADMIN users can now access the Bills page correctly.</p>
+        </div>
+
+        <div class="module-card">
+            <h3>Issue: Login Problems</h3>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Verify email and password are correct</li>
+                <li>Check if account is active</li>
+                <li>Clear browser cache and cookies</li>
+                <li>Try a different browser</li>
+                <li>Contact admin for password reset</li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <h3>Issue: Page Not Loading</h3>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Check internet connection</li>
+                <li>Refresh the page (F5 or Ctrl+R)</li>
+                <li>Clear browser cache</li>
+                <li>Check if you have permission to access that page</li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <h3>Issue: Data Not Saving</h3>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Check all required fields are filled</li>
+                <li>Verify data format (dates, numbers, etc.)</li>
+                <li>Check for error messages on screen</li>
+                <li>Try again after a few moments</li>
+                <li>Contact support if issue persists</li>
+            </ul>
+        </div>
+
+        <h2>10.2 Best Practices</h2>
+        
+        <div class="feature-box">
+            <h3>System Usage Guidelines</h3>
+            <ul>
+                <li><strong>Regular Backups:</strong> System automatically backs up data, but keep local records of critical information</li>
+                <li><strong>Accurate Data Entry:</strong> Always double-check information before saving</li>
+                <li><strong>Timely Updates:</strong> Record production, attendance, and sales in real-time</li>
+                <li><strong>Security:</strong> Never share login credentials; log out when finished</li>
+                <li><strong>Training:</strong> Ensure all users are properly trained on their modules</li>
+                <li><strong>Communication:</strong> Report issues immediately to prevent workflow disruption</li>
+                <li><strong>Documentation:</strong> Keep physical records as backup for critical transactions</li>
+            </ul>
+        </div>
+
+        <h2>10.3 Support & Contact</h2>
+        
+        <div class="feature-box">
+            <h3>Getting Help</h3>
+            <p>For technical support, system issues, or questions:</p>
+            
+            <div style="margin: 20px 0; padding: 20px; background: white; border-radius: 10px;">
+                <h4 style="color: #1e3a8a; margin-bottom: 15px;">R H Technology</h4>
+                <p><strong>📞 Phone:</strong> 8983839143</p>
+                <p><strong>⏰ Support Hours:</strong> Monday - Saturday, 9:00 AM - 6:00 PM</p>
+                <p><strong>📧 Email:</strong> support@rhtechnology.com</p>
+            </div>
+            
+            <p><strong>When contacting support, please provide:</strong></p>
+            <ul>
+                <li>Your name and role</li>
+                <li>Description of the issue</li>
+                <li>Steps to reproduce the problem</li>
+                <li>Screenshots (if applicable)</li>
+                <li>Browser and device information</li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>HM ERP System - User Guide</strong></p>
+            <p>Version 2.0 | February 2026</p>
+            <p>Developed by R H Technology</p>
+            <p>Contact: 8983839143</p>
+            <p style="margin-top: 10px; font-size: 12px;">© 2026 R H Technology. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

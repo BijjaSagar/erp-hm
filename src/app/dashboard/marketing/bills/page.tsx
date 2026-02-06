@@ -208,11 +208,11 @@ export default async function BillsPage() {
                                         </div>
                                         <div className="flex gap-2">
                                             <Link href={`/dashboard/pos/${bill.id}`}>
-                                                <Button size="sm" variant="outline">
+                                                <Button size="icon" variant="outline" className="h-8 w-8">
                                                     <Eye className="h-4 w-4" />
                                                 </Button>
                                             </Link>
-                                            <Button size="sm" variant="outline">
+                                            <Button size="icon" variant="outline" className="h-8 w-8">
                                                 <Download className="h-4 w-4" />
                                             </Button>
                                         </div>
