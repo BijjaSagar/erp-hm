@@ -10,7 +10,7 @@ import Link from "next/link";
 export default async function BillsPage() {
     const session = await auth();
 
-    if (!session?.user || session.user.role !== "MARKETING_HEAD") {
+    if (!session?.user || (session.user.role !== "MARKETING_HEAD" && session.user.role !== "ADMIN")) {
         redirect("/dashboard");
     }
 
