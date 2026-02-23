@@ -17,24 +17,26 @@ import { ProductionStage } from '@prisma/client';
 
 interface MaterialConsumptionFormProps {
     stage: ProductionStage;
+    orderId?: string;
     onChange: (materials: any[]) => void;
 }
 
-export function MaterialConsumptionForm({ stage, onChange }: MaterialConsumptionFormProps) {
+export function MaterialConsumptionForm({ stage, orderId, onChange }: MaterialConsumptionFormProps) {
     const [availableMaterials, setAvailableMaterials] = useState<any[]>([]);
     const [consumedMaterials, setConsumedMaterials] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchMaterials() {
-            const result = await getAvailableMaterials(stage);
+            setLoading(true);
+            const result = await getAvailableMaterials(stage, orderId);
             if (result.materials) {
                 setAvailableMaterials(result.materials);
             }
             setLoading(false);
         }
         fetchMaterials();
-    }, [stage]);
+    }, [stage, orderId]);
 
     const handleAddMaterial = () => {
         setConsumedMaterials([...consumedMaterials, { materialId: '', quantity: 0, unit: '' }]);

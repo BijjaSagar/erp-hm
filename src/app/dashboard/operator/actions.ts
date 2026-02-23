@@ -11,8 +11,9 @@ export async function getAssignedOrders() {
         return { error: "Unauthorized" };
     }
 
-    // Allow ADMIN to view all orders, or require employeeId for operators
-    if (session.user.role !== "ADMIN" && !session.user.employeeId) {
+    // Allow ADMIN to view all orders, or require employeeId for operators/managers
+    const allowedRoles = ["ADMIN", "STORE_MANAGER", "BRANCH_MANAGER"];
+    if (!allowedRoles.includes(session.user.role) && !session.user.employeeId) {
         return { error: "Unauthorized" };
     }
 
@@ -98,8 +99,9 @@ export async function getOperatorStats() {
         return { error: "Unauthorized" };
     }
 
-    // Allow ADMIN to view stats, or require employeeId for operators
-    if (session.user.role !== "ADMIN" && !session.user.employeeId) {
+    // Allow ADMIN, STORE_MANAGER, BRANCH_MANAGER to view stats, or require employeeId for operators
+    const allowedRoles = ["ADMIN", "STORE_MANAGER", "BRANCH_MANAGER"];
+    if (!allowedRoles.includes(session.user.role) && !session.user.employeeId) {
         return { error: "Unauthorized" };
     }
 

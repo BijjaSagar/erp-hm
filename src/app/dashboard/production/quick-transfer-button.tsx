@@ -32,9 +32,10 @@ interface QuickTransferButtonProps {
         name: string;
         address: string | null;
     }>;
+    label?: string;
 }
 
-export function QuickTransferButton({ order, stores }: QuickTransferButtonProps) {
+export function QuickTransferButton({ order, stores, label }: QuickTransferButtonProps) {
     const [open, setOpen] = useState(false);
     const [selectedStore, setSelectedStore] = useState("");
     const [loading, setLoading] = useState(false);
@@ -79,14 +80,14 @@ export function QuickTransferButton({ order, stores }: QuickTransferButtonProps)
             <DialogTrigger asChild>
                 <Button
                     size="sm"
-                    className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+                    className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 font-medium"
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                     }}
                 >
-                    <Truck className="h-3 w-3 mr-1" />
-                    Transfer
+                    <Truck className="h-4 w-4 mr-2" />
+                    {label || "Transfer"}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]" onClick={(e) => e.stopPropagation()}>

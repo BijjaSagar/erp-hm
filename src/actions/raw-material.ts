@@ -249,3 +249,14 @@ export async function getRawMaterialStats() {
         };
     }
 }
+export async function getInventoryItems() {
+    try {
+        const items = await prisma.inventoryItem.findMany({
+            orderBy: { name: "asc" },
+        });
+        return items;
+    } catch (error) {
+        console.error("Error fetching inventory items:", error);
+        return [];
+    }
+}

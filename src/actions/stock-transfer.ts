@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
-import { TransferSourceType, TransferStatus } from "@prisma/client";
+import { TransferSourceType, TransferStatus, ProductionStage } from "@prisma/client";
 
 // Generate unique transfer number
 async function generateTransferNumber(): Promise<string> {
@@ -278,6 +278,15 @@ export async function transferFromProduction(
                     create: items,
                 },
             },
+        });
+
+        // Update the order's current stage to PREPARATION
+        await prisma.order.update({
+            where: { id: orderId },
+            data: {
+                currentStage: ProductionStage.PREPARATION,
+                status: "IN_PRODUCTION" // Set back to production since prep is needed
+            }
         });
 
         revalidatePath("/dashboard/stock-transfer");

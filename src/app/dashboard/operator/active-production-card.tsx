@@ -186,6 +186,7 @@ export function ActiveProductionCard({ session }: ActiveProductionCardProps) {
 
                             <MaterialConsumptionForm
                                 stage={session.stage}
+                                orderId={session.orderId}
                                 onChange={setMaterialsUsed}
                             />
                         </div>

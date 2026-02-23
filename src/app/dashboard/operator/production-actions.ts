@@ -211,7 +211,7 @@ export async function getOperatorMachines() {
     }
 }
 
-export async function getAvailableMaterials(stage: ProductionStage) {
+export async function getAvailableMaterials(stage: ProductionStage, orderId?: string) {
     const session = await auth();
     if (!session?.user?.employeeId) {
         return { error: "Unauthorized" };
@@ -219,7 +219,6 @@ export async function getAvailableMaterials(stage: ProductionStage) {
 
     try {
         // Define material categories based on stage
-        // This is a simplified mapping, can be expanded
         let categories: string[] = [];
         switch (stage) {
             case ProductionStage.CUTTING:
@@ -236,10 +235,11 @@ export async function getAvailableMaterials(stage: ProductionStage) {
                 categories = ['HARDWARE', 'PACKAGING'];
                 break;
             default:
-                categories = ['CONSUMABLE'];
+                categories = ['CONSUMABLE', 'OTHER'];
         }
 
-        const materials = await prisma.inventoryItem.findMany({
+        // Fetch regular inventory materials
+        const inventoryMaterials = await prisma.inventoryItem.findMany({
             where: {
                 category: { in: categories }
             },
@@ -251,7 +251,34 @@ export async function getAvailableMaterials(stage: ProductionStage) {
             }
         });
 
-        return { materials };
+        // If orderId is provided, fetch materials specifically allocated to this order
+        let allocatedMaterials: any[] = [];
+        if (orderId) {
+            const allocations = await prisma.materialAllocation.findMany({
+                where: { orderId },
+                include: {
+                    material: true
+                }
+            });
+
+            allocatedMaterials = allocations.map((a: any) => ({
+                id: a.materialId,
+                name: `${a.material.name} (ALLOCATED)`,
+                unit: a.unit,
+                quantity: a.quantity,
+                isAllocated: true
+            }));
+        }
+
+        // Combine and prioritize allocated materials
+        const allMaterials = [...allocatedMaterials, ...inventoryMaterials];
+
+        // Remove duplicates (if any) - prefer the one in allocatedMaterials
+        const uniqueMaterials = allMaterials.filter((v, i, a) =>
+            a.findIndex(t => (t.id === v.id)) === i
+        );
+
+        return { materials: uniqueMaterials };
     } catch (error) {
         console.error("Failed to fetch materials:", error);
         return { error: "Failed to fetch materials" };

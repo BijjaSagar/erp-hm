@@ -8,7 +8,8 @@ import { Package, TrendingUp, AlertTriangle, CheckCircle2 } from "lucide-react";
 export default async function FinishedGoodsPage() {
     const session = await auth();
 
-    if (!session?.user || session.user.role !== "MARKETING_HEAD") {
+    const allowedRoles = ["MARKETING_HEAD", "BRANCH_MANAGER", "ADMIN", "STORE_MANAGER"];
+    if (!session?.user || !allowedRoles.includes(session.user.role)) {
         redirect("/dashboard");
     }
 

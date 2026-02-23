@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -40,13 +40,35 @@ export function MachineForm({ machine, branches, onSuccess }: MachineFormProps) 
             name: machine?.name || '',
             code: machine?.code || '',
             stage: machine?.stage || ProductionStage.CUTTING,
-            capacity: machine?.capacity || undefined,
+            capacity: typeof machine?.capacity === 'number' ? machine.capacity : undefined,
             branchId: machine?.branchId || (branches.length > 0 ? branches[0].id : ''),
             isActive: machine?.isActive ?? true,
         },
     });
 
-    const onSubmit = (data: MachineData) => {
+    useEffect(() => {
+        if (machine) {
+            form.reset({
+                name: machine.name || '',
+                code: machine.code || '',
+                stage: machine.stage || ProductionStage.CUTTING,
+                capacity: typeof machine.capacity === 'number' ? machine.capacity : undefined,
+                branchId: machine.branchId || (branches.length > 0 ? branches[0].id : ''),
+                isActive: machine.isActive ?? true,
+            });
+        } else {
+            form.reset({
+                name: '',
+                code: '',
+                stage: ProductionStage.CUTTING,
+                capacity: undefined,
+                branchId: branches.length > 0 ? branches[0].id : '',
+                isActive: true,
+            });
+        }
+    }, [machine, form, branches]);
+
+    const onSubmit = async (data: MachineData) => {
         setError(null);
         startTransition(async () => {
             try {
@@ -58,7 +80,7 @@ export function MachineForm({ machine, branches, onSuccess }: MachineFormProps) 
                 }
 
                 if (result.error) {
-                    setError(result.error);
+                    setError(result.error as string);
                 } else {
                     form.reset();
                     router.refresh();
@@ -101,7 +123,7 @@ export function MachineForm({ machine, branches, onSuccess }: MachineFormProps) 
                     <Label htmlFor="stage">Production Stage</Label>
                     <Select
                         onValueChange={(value) => form.setValue("stage", value as ProductionStage)}
-                        defaultValue={form.getValues("stage")}
+                        value={form.watch("stage")}
                     >
                         <SelectTrigger>
                             <SelectValue placeholder="Select stage" />
@@ -123,7 +145,7 @@ export function MachineForm({ machine, branches, onSuccess }: MachineFormProps) 
                     <Label htmlFor="branchId">Branch</Label>
                     <Select
                         onValueChange={(value) => form.setValue("branchId", value)}
-                        defaultValue={form.getValues("branchId")}
+                        value={form.watch("branchId")}
                     >
                         <SelectTrigger>
                             <SelectValue placeholder="Select branch" />
@@ -147,7 +169,7 @@ export function MachineForm({ machine, branches, onSuccess }: MachineFormProps) 
                 <Input
                     id="capacity"
                     type="number"
-                    {...form.register("capacity")}
+                    {...form.register("capacity", { valueAsNumber: true })}
                     placeholder="e.g. 100"
                 />
             </div>

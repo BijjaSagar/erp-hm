@@ -110,8 +110,8 @@ export function MachineList({ machines, branches }: MachineListProps) {
                                     <TableCell>
                                         <Badge variant="outline">{machine.code}</Badge>
                                     </TableCell>
-                                    <TableCell>{machine.stage.replace(/_/g, ' ')}</TableCell>
-                                    <TableCell>{machine.branch.name}</TableCell>
+                                    <TableCell>{machine.stage?.replace(/_/g, ' ') || 'N/A'}</TableCell>
+                                    <TableCell>{machine.branch?.name || 'Unknown'}</TableCell>
                                     <TableCell>
                                         <Badge variant={machine.isActive ? "default" : "secondary"}>
                                             {machine.isActive ? 'Active' : 'Inactive'}

@@ -188,6 +188,19 @@ export async function getOrderById(id: string) {
                     },
                 },
                 invoices: true,
+                materialAllocations: {
+                    include: {
+                        material: true
+                    },
+                    orderBy: {
+                        allocatedAt: 'desc'
+                    }
+                },
+                materialConsumptions: {
+                    include: {
+                        material: true
+                    }
+                }
             },
         });
 
