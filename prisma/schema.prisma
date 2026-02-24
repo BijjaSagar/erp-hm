@@ -110,8 +110,8 @@ model MaterialAllocation {
   allocatedAt DateTime @default(now())
   notes       String?
 
-  order    Order         @relation(fields: [orderId], references: [id])
-  material InventoryItem @relation(fields: [materialId], references: [id])
+  order    Order       @relation(fields: [orderId], references: [id])
+  material RawMaterial @relation(fields: [materialId], references: [id])
 }
 
 model OrderItem {
@@ -196,9 +196,6 @@ model InventoryItem {
   price                Float?
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
-  stockTransactions    StockTransaction[]
-  materialConsumptions MaterialConsumption[]
-  materialAllocations  MaterialAllocation[]
 }
 
 model StockTransaction {
@@ -208,8 +205,8 @@ model StockTransaction {
   type      StockTxType
   userId    String
   timestamp DateTime      @default(now())
-  item      InventoryItem @relation(fields: [itemId], references: [id])
-  user      User          @relation(fields: [userId], references: [id])
+  item      RawMaterial @relation(fields: [itemId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
 }
 
 enum StockTxType {
@@ -395,7 +392,7 @@ model MaterialConsumption {
   notes             String?
 
   order           Order            @relation(fields: [orderId], references: [id])
-  material        InventoryItem    @relation(fields: [materialId], references: [id])
+  material        RawMaterial      @relation(fields: [materialId], references: [id])
   employee        Employee         @relation("MaterialConsumer", fields: [consumedBy], references: [id], onDelete: Cascade)
   productionEntry ProductionEntry? @relation(fields: [productionEntryId], references: [id])
 }
@@ -622,8 +619,11 @@ model RawMaterial {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  purchases RawMaterialPurchase[]
-  usage     RawMaterialUsage[]
+  purchases         RawMaterialPurchase[]
+  usage             RawMaterialUsage[]
+  stockTransactions StockTransaction[]
+  consumptions      MaterialConsumption[]
+  allocations       MaterialAllocation[]
 }
 
 // Seller - Suppliers of raw materials

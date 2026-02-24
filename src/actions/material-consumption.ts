@@ -31,17 +31,17 @@ export async function recordMaterialConsumption(
         }
 
         // Get current inventory
-        const inventoryItem = await prisma.inventoryItem.findUnique({
+        const rawMaterial = await prisma.rawMaterial.findUnique({
             where: { id: materialId },
         });
 
-        if (!inventoryItem) {
+        if (!rawMaterial) {
             return { message: "Material not found in inventory" };
         }
 
-        if (inventoryItem.quantity < quantity) {
+        if (rawMaterial.quantity < quantity) {
             return {
-                message: `Insufficient inventory. Available: ${inventoryItem.quantity} ${unit}, Requested: ${quantity} ${unit}`,
+                message: `Insufficient inventory. Available: ${rawMaterial.quantity} ${unit}, Requested: ${quantity} ${unit}`,
             };
         }
 
@@ -65,7 +65,7 @@ export async function recordMaterialConsumption(
         });
 
         // Update inventory - deduct consumed quantity
-        await prisma.inventoryItem.update({
+        await prisma.rawMaterial.update({
             where: { id: materialId },
             data: {
                 quantity: {
@@ -222,7 +222,7 @@ export async function getMaterialConsumptionSummary(orderId: string) {
  */
 export async function getLowStockMaterials() {
     try {
-        const materials = await prisma.inventoryItem.findMany({
+        const materials = await prisma.rawMaterial.findMany({
             where: {
                 OR: [
                     {
@@ -230,7 +230,7 @@ export async function getLowStockMaterials() {
                             { reorderLevel: { not: null } },
                             {
                                 quantity: {
-                                    lte: prisma.inventoryItem.fields.reorderLevel,
+                                    lte: prisma.rawMaterial.fields.reorderLevel,
                                 },
                             },
                         ],
@@ -284,7 +284,7 @@ export async function getMaterialConsumptionStats(startDate?: Date, endDate?: Da
                 },
             }).then(consumptions =>
                 consumptions.reduce((sum, c) =>
-                    sum + (c.quantity * (c.material.price || 0)), 0
+                    sum + (c.quantity * (c.material.currentPrice || 0)), 0
                 )
             ),
 
@@ -350,11 +350,11 @@ export async function bulkRecordMaterialConsumption(
 
         for (const material of materials) {
             // Check inventory
-            const inventoryItem = await prisma.inventoryItem.findUnique({
+            const rawMaterial = await prisma.rawMaterial.findUnique({
                 where: { id: material.materialId },
             });
 
-            if (!inventoryItem) {
+            if (!rawMaterial) {
                 results.push({
                     materialId: material.materialId,
                     success: false,
@@ -363,11 +363,11 @@ export async function bulkRecordMaterialConsumption(
                 continue;
             }
 
-            if (inventoryItem.quantity < material.quantity) {
+            if (rawMaterial.quantity < material.quantity) {
                 results.push({
                     materialId: material.materialId,
                     success: false,
-                    message: `Insufficient inventory. Available: ${inventoryItem.quantity}`,
+                    message: `Insufficient inventory. Available: ${rawMaterial.quantity}`,
                 });
                 continue;
             }
@@ -388,7 +388,7 @@ export async function bulkRecordMaterialConsumption(
             });
 
             // Update inventory
-            await prisma.inventoryItem.update({
+            await prisma.rawMaterial.update({
                 where: { id: material.materialId },
                 data: {
                     quantity: {

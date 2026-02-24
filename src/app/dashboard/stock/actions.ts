@@ -2,11 +2,11 @@
 
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
-import { StockTxType, InventoryItem } from "@prisma/client";
+import { StockTxType, RawMaterial } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
-export async function getInventory(): Promise<{ items: InventoryItem[] }> {
-    const items = await prisma.inventoryItem.findMany({
+export async function getInventory(): Promise<{ items: RawMaterial[] }> {
+    const items = await prisma.rawMaterial.findMany({
         orderBy: { name: 'asc' }
     });
     return { items };
@@ -19,7 +19,7 @@ export async function updateStock(itemId: string, quantity: number, type: StockT
     }
 
     try {
-        const item = await prisma.inventoryItem.findUnique({
+        const item = await prisma.rawMaterial.findUnique({
             where: { id: itemId }
         });
 
@@ -47,7 +47,7 @@ export async function updateStock(itemId: string, quantity: number, type: StockT
         }
 
         await prisma.$transaction([
-            prisma.inventoryItem.update({
+            prisma.rawMaterial.update({
                 where: { id: itemId },
                 data: { quantity: newQuantity }
             }),

@@ -116,7 +116,7 @@ export async function endProductionSession(
                     });
 
                     // Deduct from inventory
-                    await tx.inventoryItem.update({
+                    await tx.rawMaterial.update({
                         where: { id: m.materialId },
                         data: {
                             quantity: {
@@ -239,7 +239,7 @@ export async function getAvailableMaterials(stage: ProductionStage, orderId?: st
         }
 
         // Fetch regular inventory materials
-        const inventoryMaterials = await prisma.inventoryItem.findMany({
+        const inventoryMaterials = await prisma.rawMaterial.findMany({
             where: {
                 category: { in: categories }
             },

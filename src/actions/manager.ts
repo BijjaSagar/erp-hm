@@ -73,7 +73,7 @@ export async function allocateMaterial(data: {
             // But usually, "providing" means it's gone from general stock.
             // The requirement says "If a manager provides 100 kg...".
 
-            await tx.inventoryItem.update({
+            await tx.rawMaterial.update({
                 where: { id: data.materialId },
                 data: {
                     quantity: {
