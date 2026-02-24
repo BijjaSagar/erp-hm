@@ -283,9 +283,11 @@ export async function getMaterialConsumptionStats(startDate?: Date, endDate?: Da
                     material: true,
                 },
             }).then(consumptions =>
-                consumptions.reduce((sum, c) =>
-                    sum + (c.quantity * (c.material.currentPrice || 0)), 0
-                )
+                consumptions.reduce((sum, c) => {
+                    const material = c.material as any;
+                    const price = material.currentPrice || material.price || 0;
+                    return sum + (c.quantity * price);
+                }, 0)
             ),
 
             // By material type
