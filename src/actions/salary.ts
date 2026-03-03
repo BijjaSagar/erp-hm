@@ -291,4 +291,3 @@ export async function getPayrollStats(month: number, year: number) {
     }
 }
 
-export { MONTHS };

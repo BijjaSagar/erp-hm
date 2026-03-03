@@ -29,9 +29,10 @@ const initialState: FormState = {
 interface EditEmployeeFormProps {
     employee: Employee & { branch: Branch };
     branches: Branch[];
+    stores: any[];
 }
 
-export default function EditEmployeeForm({ employee, branches }: EditEmployeeFormProps) {
+export default function EditEmployeeForm({ employee, branches, stores }: EditEmployeeFormProps) {
     const router = useRouter();
     const [state, setState] = useState<FormState>(initialState);
     const [isPending, startTransition] = useTransition();
@@ -132,6 +133,23 @@ export default function EditEmployeeForm({ employee, branches }: EditEmployeeFor
                             {state.errors?.branchId && (
                                 <p className="text-sm text-red-500">{state.errors.branchId[0]}</p>
                             )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="storeId">Store (Optional)</Label>
+                            <Select name="storeId" defaultValue={employee.storeId || "none"}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select store (if applicable)" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="none">No Store</SelectItem>
+                                    {stores.map((store) => (
+                                        <SelectItem key={store.id} value={store.id}>
+                                            {store.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 
