@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft, Edit, Store, MapPin, Phone, Mail, Package, User } from "lucide-react";
+import { ArrowLeft, Edit, Store, MapPin, Phone, Mail, Package, User, Hammer, LayoutGrid } from "lucide-react";
 import { notFound } from "next/navigation";
 
 export default async function StoreDetailPage({ params }: { params: { id: string } }) {
@@ -32,6 +32,18 @@ export default async function StoreDetailPage({ params }: { params: { id: string
                     </div>
                 </div>
                 <div className="flex gap-2">
+                    <Link href={`/dashboard/stores/${store.id}/inventory`}>
+                        <Button variant="outline">
+                            <LayoutGrid className="mr-2 h-4 w-4" />
+                            Inventory
+                        </Button>
+                    </Link>
+                    <Link href={`/dashboard/stores/${store.id}/tasks`}>
+                        <Button variant="outline">
+                            <Hammer className="mr-2 h-4 w-4" />
+                            Tasks
+                        </Button>
+                    </Link>
                     <Link href={`/dashboard/stores/${store.id}/edit`}>
                         <Button variant="outline">
                             <Edit className="mr-2 h-4 w-4" />

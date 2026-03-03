@@ -47,12 +47,16 @@ model Employee {
   phone                String?
   gpsCoordinates       String?
   branchId             String
+  storeId              String? // Optional: links employee to a specific store (e.g. HM1)
   department           String? // Department/Phase (e.g., "CUTTING", "WELDING")
+  salaryType           SalaryType            @default(MONTHLY)
+  baseSalary           Float                 @default(0) // Monthly salary or daily wage
   assignedStages       ProductionStage[] // Stages this operator can work on
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
   attendance           Attendance[]
   branch               Branch                @relation(fields: [branchId], references: [id])
+  store                Store?                @relation("StoreEmployees", fields: [storeId], references: [id])
   productionLogs       ProductionLog[]
   user                 User?
   breaks               Break[]
@@ -63,6 +67,9 @@ model Employee {
   productionEntries    ProductionEntry[]     @relation("ProductionOperator")
   approvedProductions  ProductionEntry[]     @relation("ProductionApprover")
   materialConsumptions MaterialConsumption[] @relation("MaterialConsumer")
+  salaryRecords        SalaryRecord[]
+  salaryAdvances       SalaryAdvance[]
+  storeTasks           StoreProductionTask[] @relation("TaskAssignee")
 }
 
 model Attendance {
@@ -415,11 +422,13 @@ model Store {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  manager            User?            @relation("StoreManager", fields: [managerId], references: [id])
+  manager            User?                 @relation("StoreManager", fields: [managerId], references: [id])
   inventory          StoreInventory[]
-  stockTransfersTo   StockTransfer[]  @relation("TransferTo")
-  stockTransfersFrom StockTransfer[]  @relation("TransferFrom")
+  stockTransfersTo   StockTransfer[]       @relation("TransferTo")
+  stockTransfersFrom StockTransfer[]       @relation("TransferFrom")
   posTransactions    POSTransaction[]
+  employees          Employee[]            @relation("StoreEmployees")
+  productionTasks    StoreProductionTask[]
 }
 
 // Store Inventory - Products available in store
@@ -697,4 +706,108 @@ model FinalProductSale {
   notes           String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+// ============================================
+// SALARY & PAYROLL MODULE
+// ============================================
+
+enum SalaryType {
+  MONTHLY
+  DAILY
+}
+
+enum SalaryStatus {
+  DRAFT
+  PROCESSED
+  PAID
+}
+
+enum AdvanceType {
+  ADVANCE
+  DEDUCTION
+  BONUS
+}
+
+// SalaryRecord - Monthly payroll run for an employee
+model SalaryRecord {
+  id             String       @id @default(cuid())
+  employeeId     String
+  month          Int          // 1-12
+  year           Int
+  workingDays    Int          // Total working days in month
+  presentDays    Int          // Employee present days (from attendance)
+  absentDays     Int          @default(0)
+  baseSalary     Float        // From employee's salary structure
+  salaryType     SalaryType
+  earnedSalary   Float        // Calculated: baseSalary * (presentDays/workingDays)
+  advanceAmount  Float        @default(0) // Total advance deductions
+  bonusAmount    Float        @default(0) // Bonuses added
+  deductions     Float        @default(0) // Other deductions
+  netSalary      Float        // Final amount after all adjustments
+  status         SalaryStatus @default(DRAFT)
+  paidAt         DateTime?
+  paidBy         String?      // User ID who processed payment
+  notes          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, month, year])
+}
+
+// SalaryAdvance - Track advance payments and deductions
+model SalaryAdvance {
+  id          String      @id @default(cuid())
+  employeeId  String
+  type        AdvanceType
+  amount      Float
+  reason      String
+  date        DateTime    @default(now())
+  recoveredIn String?     // "2026-03" format — which payroll period to deduct from
+  isRecovered Boolean     @default(false)
+  approvedBy  String?     // User ID
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// HM1 STORE PRODUCTION TASK MODULE
+// ============================================
+
+enum StoreTaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum StoreTaskType {
+  PLYWOOD_FITTING
+  PAINTING
+  FINISHING
+  OTHER
+}
+
+// StoreProductionTask - Work done at HM1 store on received orders
+model StoreProductionTask {
+  id           String          @id @default(cuid())
+  storeId      String
+  orderId      String?         // Linked order (optional)
+  transferId   String?         // Linked stock transfer (optional)
+  taskType     StoreTaskType
+  description  String?
+  assignedTo   String?         // Employee ID
+  status       StoreTaskStatus @default(PENDING)
+  startedAt    DateTime?
+  completedAt  DateTime?
+  notes        String?
+  createdBy    String          // User ID
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  store    Store     @relation(fields: [storeId], references: [id])
+  assignee Employee? @relation("TaskAssignee", fields: [assignedTo], references: [id], onDelete: SetNull)
 }

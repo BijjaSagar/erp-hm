@@ -19,7 +19,8 @@ import {
     Store,
     ShoppingCart,
     Package,
-    DollarSign
+    DollarSign,
+    IndianRupee
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -55,6 +56,13 @@ const routes = [
         href: "/dashboard/attendance",
         color: "text-orange-400",
         roles: ["ADMIN", "OPERATOR", "PRODUCTION_SUPERVISOR"],
+    },
+    {
+        label: "Salary & Payroll",
+        icon: IndianRupee,
+        href: "/dashboard/salary",
+        color: "text-yellow-400",
+        roles: ["ADMIN", "BRANCH_MANAGER"],
     },
     {
         label: "Orders",

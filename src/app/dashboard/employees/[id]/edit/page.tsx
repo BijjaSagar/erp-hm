@@ -2,13 +2,15 @@ export const dynamic = 'force-dynamic';
 
 import { getEmployeeById } from "@/actions/employee";
 import { getBranches } from "@/actions/branch";
+import { getStores } from "@/actions/store";
 import { notFound } from "next/navigation";
 import EditEmployeeForm from "./form";
 
 export default async function EditEmployeePage({ params }: { params: { id: string } }) {
-    const [employee, branches] = await Promise.all([
+    const [employee, branches, stores] = await Promise.all([
         getEmployeeById(params.id),
         getBranches(),
+        getStores(),
     ]);
 
     if (!employee) {
@@ -26,6 +28,7 @@ export default async function EditEmployeePage({ params }: { params: { id: strin
             <EditEmployeeForm
                 employee={JSON.parse(JSON.stringify(employee))}
                 branches={JSON.parse(JSON.stringify(branches))}
+                stores={JSON.parse(JSON.stringify(stores))}
             />
         </div>
     );

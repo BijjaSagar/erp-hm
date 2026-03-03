@@ -47,6 +47,7 @@ export async function createEmployee(prevState: any, formData: FormData) {
     }
 
     const { name, designation, phone, branchId } = validatedFields.data;
+    const storeId = formData.get("storeId") as string | null;
 
     try {
         await prisma.employee.create({
@@ -55,6 +56,7 @@ export async function createEmployee(prevState: any, formData: FormData) {
                 designation,
                 phone,
                 branchId,
+                storeId: storeId && storeId !== "none" ? storeId : null,
             },
         });
     } catch (error) {
@@ -99,6 +101,7 @@ export async function updateEmployee(id: string, prevState: any, formData: FormD
     }
 
     const { name, designation, phone, branchId } = validatedFields.data;
+    const storeId = formData.get("storeId") as string | null;
 
     try {
         await prisma.employee.update({
@@ -108,6 +111,7 @@ export async function updateEmployee(id: string, prevState: any, formData: FormD
                 designation,
                 phone,
                 branchId,
+                storeId: storeId && storeId !== "none" ? storeId : null,
             },
         });
     } catch (error) {

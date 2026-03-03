@@ -25,7 +25,7 @@ const initialState: FormState = {
     errors: {},
 };
 
-export default function NewEmployeeForm({ branches }: { branches: any[] }) {
+export default function NewEmployeeForm({ branches, stores }: { branches: any[], stores: any[] }) {
     const [state, setState] = useState<FormState>(initialState);
     const [isPending, startTransition] = useTransition();
 
@@ -95,6 +95,23 @@ export default function NewEmployeeForm({ branches }: { branches: any[] }) {
                             {state?.errors?.branchId && (
                                 <p className="text-sm text-red-500">{state.errors.branchId[0]}</p>
                             )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="storeId">Store (Optional)</Label>
+                            <Select name="storeId">
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select store (if applicable)" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="none">No Store</SelectItem>
+                                    {stores.map((store) => (
+                                        <SelectItem key={store.id} value={store.id}>
+                                            {store.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
 
                         <div className="space-y-2">
