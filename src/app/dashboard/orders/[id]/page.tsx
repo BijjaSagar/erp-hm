@@ -12,7 +12,7 @@ import { notFound, redirect } from "next/navigation";
 import DeleteOrderButton from "./delete-button";
 import { ApproveOrderButton } from "./approve-button";
 import { MaterialAllocationForm } from "./material-allocation-form";
-import { QuickTransferButton } from "../../production/quick-transfer-button";
+import { BillAndTransferButton } from "./bill-and-transfer-button";
 import { getStoresForTransfer } from "@/actions/stock-transfer";
 
 const statusColors = {
@@ -98,17 +98,18 @@ export default async function OrderDetailPage({ params }: { params: { id: string
                         <ApproveOrderButton orderId={order.id} />
                     )}
 
-                    {/* Branch-Specific HP1 Transfer Logic */}
+                    {/* Branch-Specific HP1 Transfer Logic: After Finishing → Generate Bill + Transfer to HM1 */}
                     {(order.currentStage === "FINISHING" || order.currentStage === "COMPLETED") && order.branch?.code === "HP1" && (
-                        <QuickTransferButton
+                        <BillAndTransferButton
                             order={{
                                 id: order.id,
                                 orderNumber: order.orderNumber,
                                 customerName: order.customerName,
+                                customerPhone: order.customerPhone,
                                 items: order.items || []
                             }}
                             stores={stores}
-                            label="Transfer to HM1 (Sells)"
+                            label="Bill & Transfer to HM1"
                         />
                     )}
 
