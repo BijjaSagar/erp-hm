@@ -175,12 +175,12 @@ export function BillAndTransferButton({ order, stores, label }: BillAndTransferB
                         <ArrowRight className="h-4 w-4 text-slate-400" />
                         <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${step === 2 ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"}`}>
                             <Truck className="h-3.5 w-3.5" />
-                            Step 2: Transfer to HM1
+                            Step 2: Transfer to Store
                         </div>
                     </div>
 
                     <DialogTitle>
-                        {step === 1 ? "Generate Bill" : "Transfer to HM1 Store"}
+                        {step === 1 ? "Generate Bill" : "Move to Store"}
                     </DialogTitle>
                     <DialogDescription>
                         Order <span className="font-semibold">{order.orderNumber}</span> — {order.customerName}
@@ -338,7 +338,7 @@ export function BillAndTransferButton({ order, stores, label }: BillAndTransferB
                             ) : (
                                 <>
                                     <Truck className="h-4 w-4 mr-2" />
-                                    Transfer to HM1
+                                    Move to Store
                                 </>
                             )}
                         </Button>

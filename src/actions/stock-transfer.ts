@@ -280,12 +280,21 @@ export async function transferFromProduction(
             },
         });
 
-        // Update the order's current stage to PAINTING (next stage after Finishing at HP1)
+        // If transferring from a different branch to the owner's branch (HM1)
+        const targetBranch = await prisma.branch.findUnique({
+            where: { code: "HM1" }
+        });
+
+        // Determine next stage: if it's Finishing, move to Painting. If already Completed, stay there.
+        const nextStage = order.currentStage === "FINISHING" ? ProductionStage.PAINTING : order.currentStage;
+
+        // Update the order: Move to HM1 branch and advance stage
         await prisma.order.update({
             where: { id: orderId },
             data: {
-                currentStage: ProductionStage.PAINTING,
-                status: "IN_PRODUCTION"
+                currentStage: nextStage,
+                status: nextStage === "COMPLETED" ? "COMPLETED" : "IN_PRODUCTION",
+                branchId: targetBranch?.id || order.branchId, // Move to HM1 branch if found
             }
         });
 

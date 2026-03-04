@@ -98,8 +98,8 @@ export default async function OrderDetailPage({ params }: { params: { id: string
                         <ApproveOrderButton orderId={order.id} />
                     )}
 
-                    {/* Branch-Specific Transfer Logic: After Finishing → Generate Bill + Transfer to HM1 */}
-                    {(order.currentStage === "FINISHING" || order.currentStage === "COMPLETED") && order.branch?.code !== "HM1" && (
+                    {/* Transfer Logic: After Finishing or Completion → Generate Bill + Transfer to Store */}
+                    {(order.currentStage === "FINISHING" || order.currentStage === "COMPLETED") && (
                         <BillAndTransferButton
                             order={{
                                 id: order.id,
@@ -109,7 +109,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
                                 items: order.items || []
                             }}
                             stores={stores}
-                            label="Bill & Transfer to HM1"
+                            label={order.branch?.code === "HM1" ? "Final Bill & Move to Store" : "Bill & Transfer to HM1"}
                         />
                     )}
 
