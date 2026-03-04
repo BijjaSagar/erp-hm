@@ -280,12 +280,12 @@ export async function transferFromProduction(
             },
         });
 
-        // Update the order's current stage to PREPARATION
+        // Update the order's current stage to PAINTING (next stage after Finishing at HP1)
         await prisma.order.update({
             where: { id: orderId },
             data: {
-                currentStage: ProductionStage.PREPARATION,
-                status: "IN_PRODUCTION" // Set back to production since prep is needed
+                currentStage: ProductionStage.PAINTING,
+                status: "IN_PRODUCTION"
             }
         });
 

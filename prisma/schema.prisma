@@ -15,10 +15,10 @@ model Branch {
   createdAt          DateTime        @default(now())
   updatedAt          DateTime        @updatedAt
   employees          Employee[]
-  orders             Order[]
-  users              User[]
   machines           Machine[]
+  orders             Order[]
   stockTransfersFrom StockTransfer[]
+  users              User[]
 }
 
 model User {
@@ -28,16 +28,16 @@ model User {
   name              String
   role              Role               @default(OPERATOR)
   branchId          String?
-  employeeId        String?            @unique
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
+  employeeId        String?            @unique
+  posTransactions   POSTransaction[]
+  stockTransactions StockTransaction[]
+  transfersIn       StockTransfer[]    @relation("Receiver")
+  transfersOut      StockTransfer[]    @relation("Transferrer")
+  managedStore      Store?             @relation("StoreManager")
   branch            Branch?            @relation(fields: [branchId], references: [id])
   employee          Employee?          @relation(fields: [employeeId], references: [id])
-  stockTransactions StockTransaction[]
-  managedStore      Store?             @relation("StoreManager")
-  posTransactions   POSTransaction[]
-  transfersOut      StockTransfer[]    @relation("Transferrer")
-  transfersIn       StockTransfer[]    @relation("Receiver")
 }
 
 model Employee {
@@ -47,29 +47,29 @@ model Employee {
   phone                String?
   gpsCoordinates       String?
   branchId             String
-  storeId              String? // Optional: links employee to a specific store (e.g. HM1)
-  department           String? // Department/Phase (e.g., "CUTTING", "WELDING")
-  salaryType           SalaryType            @default(MONTHLY)
-  baseSalary           Float                 @default(0) // Monthly salary or daily wage
-  assignedStages       ProductionStage[] // Stages this operator can work on
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
+  assignedStages       ProductionStage[]
+  department           String?
+  baseSalary           Float                 @default(0)
+  salaryType           SalaryType            @default(MONTHLY)
+  storeId              String?
   attendance           Attendance[]
+  breaks               Break[]
   branch               Branch                @relation(fields: [branchId], references: [id])
   store                Store?                @relation("StoreEmployees", fields: [storeId], references: [id])
-  productionLogs       ProductionLog[]
-  user                 User?
-  breaks               Break[]
   leaveRequests        LeaveRequest[]
-  wastageLogs          WastageLog[]
   machineReports       MachineStatus[]       @relation("MachineReporter")
   machineResolved      MachineStatus[]       @relation("MachineResolver")
-  productionEntries    ProductionEntry[]     @relation("ProductionOperator")
-  approvedProductions  ProductionEntry[]     @relation("ProductionApprover")
   materialConsumptions MaterialConsumption[] @relation("MaterialConsumer")
-  salaryRecords        SalaryRecord[]
+  approvedProductions  ProductionEntry[]     @relation("ProductionApprover")
+  productionEntries    ProductionEntry[]     @relation("ProductionOperator")
+  productionLogs       ProductionLog[]
   salaryAdvances       SalaryAdvance[]
+  salaryRecords        SalaryRecord[]
   storeTasks           StoreProductionTask[] @relation("TaskAssignee")
+  user                 User?
+  wastageLogs          WastageLog[]
 }
 
 model Attendance {
@@ -97,28 +97,27 @@ model Order {
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
   invoices             Invoice[]
+  materialAllocations  MaterialAllocation[]
+  materialConsumptions MaterialConsumption[]
   branch               Branch?               @relation(fields: [branchId], references: [id])
   items                OrderItem[]
-  productionLogs       ProductionLog[]
-  wastageLogs          WastageLog[]
   productionEntries    ProductionEntry[]
-  materialConsumptions MaterialConsumption[]
-  materialAllocations  MaterialAllocation[]
+  productionLogs       ProductionLog[]
   stockTransfers       StockTransfer[]
+  wastageLogs          WastageLog[]
 }
 
 model MaterialAllocation {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   orderId     String
-  materialId  String // Links to InventoryItem
-  quantity    Float // Weight or quantity provided
+  materialId  String
+  quantity    Float
   unit        String
-  allocatedBy String // User/Employee ID
-  allocatedAt DateTime @default(now())
+  allocatedBy String
+  allocatedAt DateTime    @default(now())
   notes       String?
-
-  order    Order       @relation(fields: [orderId], references: [id])
-  material RawMaterial @relation(fields: [materialId], references: [id])
+  material    RawMaterial @relation(fields: [materialId], references: [id])
+  order       Order       @relation(fields: [orderId], references: [id])
 }
 
 model OrderItem {
@@ -141,7 +140,7 @@ model ProductionLog {
   employeeId String?
   notes      String?
   timestamp  DateTime        @default(now())
-  employee   Employee?       @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  employee   Employee?       @relation(fields: [employeeId], references: [id])
   order      Order           @relation(fields: [orderId], references: [id])
 }
 
@@ -155,6 +154,441 @@ model Invoice {
   status      String
   generatedAt DateTime @default(now())
   order       Order    @relation(fields: [orderId], references: [id])
+}
+
+model InventoryItem {
+  id           String   @id @default(cuid())
+  name         String
+  quantity     Float
+  unit         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  category     String
+  price        Float?
+  reorderLevel Float?
+  sku          String   @unique
+}
+
+model StockTransaction {
+  id        String      @id @default(cuid())
+  itemId    String
+  quantity  Float
+  type      StockTxType
+  userId    String
+  timestamp DateTime    @default(now())
+  item      RawMaterial @relation(fields: [itemId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
+}
+
+model Break {
+  id         String    @id @default(cuid())
+  employeeId String
+  startTime  DateTime  @default(now())
+  endTime    DateTime?
+  duration   Int?
+  reason     String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  employee   Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model LeaveRequest {
+  id         String      @id @default(cuid())
+  employeeId String
+  leaveType  LeaveType
+  startDate  DateTime
+  endDate    DateTime
+  reason     String
+  status     LeaveStatus @default(PENDING)
+  approvedBy String?
+  approvedAt DateTime?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  employee   Employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model WastageLog {
+  id           String          @id @default(cuid())
+  employeeId   String
+  orderId      String?
+  materialName String
+  quantity     Float
+  unit         String
+  reason       String
+  stage        ProductionStage
+  photoUrl     String?
+  timestamp    DateTime        @default(now())
+  employee     Employee        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  order        Order?          @relation(fields: [orderId], references: [id])
+}
+
+model MachineStatus {
+  id          String          @id @default(cuid())
+  machineName String
+  status      MachineState    @default(OPERATIONAL)
+  issue       String?
+  priority    Priority        @default(MEDIUM)
+  reportedBy  String
+  resolvedBy  String?
+  reportedAt  DateTime        @default(now())
+  resolvedAt  DateTime?
+  stage       ProductionStage
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  machineId   String?
+  machine     Machine?        @relation("MachineMaster", fields: [machineId], references: [id])
+  reporter    Employee        @relation("MachineReporter", fields: [reportedBy], references: [id], onDelete: Cascade)
+  resolver    Employee?       @relation("MachineResolver", fields: [resolvedBy], references: [id])
+}
+
+model Machine {
+  id                String            @id @default(cuid())
+  name              String
+  code              String            @unique
+  stage             ProductionStage
+  capacity          Int?
+  branchId          String
+  isActive          Boolean           @default(true)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  branch            Branch            @relation(fields: [branchId], references: [id])
+  machineStatuses   MachineStatus[]   @relation("MachineMaster")
+  productionEntries ProductionEntry[]
+}
+
+model ProductionEntry {
+  id                   String                @id @default(cuid())
+  orderId              String
+  machineId            String
+  operatorId           String
+  stage                ProductionStage
+  inputQuantity        Int
+  outputQuantity       Int
+  rejectedQuantity     Int                   @default(0)
+  wastageQuantity      Float                 @default(0)
+  wastagePercentage    Float?
+  startTime            DateTime              @default(now())
+  endTime              DateTime?
+  duration             Int?
+  materialsUsed        Json?
+  qualityNotes         String?
+  qualityApproved      Boolean               @default(false)
+  approvedBy           String?
+  approvedAt           DateTime?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  materialConsumptions MaterialConsumption[]
+  approver             Employee?             @relation("ProductionApprover", fields: [approvedBy], references: [id])
+  machine              Machine               @relation(fields: [machineId], references: [id])
+  operator             Employee              @relation("ProductionOperator", fields: [operatorId], references: [id], onDelete: Cascade)
+  order                Order                 @relation(fields: [orderId], references: [id])
+}
+
+model MaterialConsumption {
+  id                String           @id @default(cuid())
+  productionEntryId String?
+  orderId           String
+  materialId        String
+  materialType      MaterialType
+  quantity          Float
+  unit              String
+  stage             ProductionStage
+  consumedBy        String
+  consumedAt        DateTime         @default(now())
+  notes             String?
+  employee          Employee         @relation("MaterialConsumer", fields: [consumedBy], references: [id], onDelete: Cascade)
+  material          RawMaterial      @relation(fields: [materialId], references: [id])
+  order             Order            @relation(fields: [orderId], references: [id])
+  productionEntry   ProductionEntry? @relation(fields: [productionEntryId], references: [id])
+}
+
+model Store {
+  id                 String                @id @default(cuid())
+  name               String
+  code               String                @unique
+  address            String
+  phone              String?
+  email              String?
+  gstNumber          String?
+  isActive           Boolean               @default(true)
+  managerId          String?               @unique
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  employees          Employee[]            @relation("StoreEmployees")
+  posTransactions    POSTransaction[]
+  stockTransfersFrom StockTransfer[]       @relation("TransferFrom")
+  stockTransfersTo   StockTransfer[]       @relation("TransferTo")
+  manager            User?                 @relation("StoreManager", fields: [managerId], references: [id])
+  inventory          StoreInventory[]
+  productionTasks    StoreProductionTask[]
+}
+
+model StoreInventory {
+  id           String   @id @default(cuid())
+  storeId      String
+  productName  String
+  sku          String
+  quantity     Int
+  unit         String
+  costPrice    Float
+  sellingPrice Float
+  reorderLevel Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  store        Store    @relation(fields: [storeId], references: [id])
+
+  @@unique([storeId, sku])
+}
+
+model StockTransfer {
+  id             String              @id @default(cuid())
+  transferNumber String              @unique
+  fromType       TransferSourceType
+  fromBranchId   String?
+  fromStoreId    String?
+  toStoreId      String
+  status         TransferStatus      @default(PENDING)
+  orderId        String?
+  notes          String?
+  transferredBy  String
+  receivedBy     String?
+  transferredAt  DateTime            @default(now())
+  receivedAt     DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  fromBranch     Branch?             @relation(fields: [fromBranchId], references: [id])
+  fromStore      Store?              @relation("TransferFrom", fields: [fromStoreId], references: [id])
+  order          Order?              @relation(fields: [orderId], references: [id])
+  receiver       User?               @relation("Receiver", fields: [receivedBy], references: [id])
+  toStore        Store               @relation("TransferTo", fields: [toStoreId], references: [id])
+  transferrer    User                @relation("Transferrer", fields: [transferredBy], references: [id])
+  items          StockTransferItem[]
+}
+
+model StockTransferItem {
+  id          String        @id @default(cuid())
+  transferId  String
+  productName String
+  sku         String
+  quantity    Int
+  unit        String
+  transfer    StockTransfer @relation(fields: [transferId], references: [id], onDelete: Cascade)
+}
+
+model Customer {
+  id           String           @id @default(cuid())
+  name         String
+  phone        String?
+  email        String?
+  address      String?
+  gstNumber    String?
+  customerType CustomerType     @default(RETAIL)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  transactions POSTransaction[]
+}
+
+model POSTransaction {
+  id              String               @id @default(cuid())
+  billNumber      String               @unique
+  storeId         String
+  customerId      String?
+  customerName    String?
+  subtotal        Float
+  discount        Float                @default(0)
+  taxAmount       Float                @default(0)
+  totalAmount     Float
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus        @default(COMPLETED)
+  cashierId       String
+  notes           String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  accountingEntry AccountingEntry?
+  cashier         User                 @relation(fields: [cashierId], references: [id])
+  customer        Customer?            @relation(fields: [customerId], references: [id])
+  store           Store                @relation(fields: [storeId], references: [id])
+  items           POSTransactionItem[]
+  payments        Payment[]
+}
+
+model POSTransactionItem {
+  id            String         @id @default(cuid())
+  transactionId String
+  productName   String
+  sku           String
+  quantity      Int
+  unitPrice     Float
+  discount      Float          @default(0)
+  taxRate       Float          @default(0)
+  totalPrice    Float
+  transaction   POSTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id            String         @id @default(cuid())
+  transactionId String
+  method        PaymentMethod
+  amount        Float
+  reference     String?
+  createdAt     DateTime       @default(now())
+  transaction   POSTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+}
+
+model AccountingEntry {
+  id            String          @id @default(cuid())
+  entryType     AccountingType
+  transactionId String?         @unique
+  description   String
+  debitAccount  String
+  creditAccount String
+  amount        Float
+  date          DateTime        @default(now())
+  createdAt     DateTime        @default(now())
+  transaction   POSTransaction? @relation(fields: [transactionId], references: [id])
+}
+
+model RawMaterial {
+  id                String                @id @default(cuid())
+  name              String
+  category          String
+  unit              String
+  quantity          Float                 @default(0)
+  reorderLevel      Float?
+  currentPrice      Float?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  allocations       MaterialAllocation[]
+  consumptions      MaterialConsumption[]
+  purchases         RawMaterialPurchase[]
+  usage             RawMaterialUsage[]
+  stockTransactions StockTransaction[]
+}
+
+model Seller {
+  id        String                @id @default(cuid())
+  name      String
+  contact   String?
+  phone     String?
+  email     String?
+  address   String?
+  gstNumber String?
+  isActive  Boolean               @default(true)
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+  purchases RawMaterialPurchase[]
+}
+
+model RawMaterialPurchase {
+  id                 String      @id @default(cuid())
+  sellerId           String
+  materialId         String
+  quantity           Float
+  unit               String
+  pricePerUnit       Float
+  totalPrice         Float
+  transportationCost Float       @default(0)
+  grandTotal         Float
+  billNumber         String?
+  billDate           DateTime?
+  purchaseDate       DateTime    @default(now())
+  notes              String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  material           RawMaterial @relation(fields: [materialId], references: [id])
+  seller             Seller      @relation(fields: [sellerId], references: [id])
+}
+
+model RawMaterialUsage {
+  id         String      @id @default(cuid())
+  materialId String
+  quantity   Float
+  unit       String
+  usedFor    String?
+  usedBy     String?
+  notes      String?
+  usedAt     DateTime    @default(now())
+  createdAt  DateTime    @default(now())
+  material   RawMaterial @relation(fields: [materialId], references: [id])
+}
+
+model FinalProductSale {
+  id              String   @id @default(cuid())
+  productName     String
+  description     String?
+  quantity        Int
+  unit            String   @default("pieces")
+  pricePerUnit    Float
+  totalPrice      Float
+  customerName    String?
+  customerPhone   String?
+  customerAddress String?
+  saleDate        DateTime @default(now())
+  paymentStatus   String   @default("PENDING")
+  paidAmount      Float    @default(0)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SalaryRecord {
+  id            String       @id @default(cuid())
+  employeeId    String
+  month         Int
+  year          Int
+  workingDays   Int
+  presentDays   Int
+  absentDays    Int          @default(0)
+  baseSalary    Float
+  salaryType    SalaryType
+  earnedSalary  Float
+  advanceAmount Float        @default(0)
+  bonusAmount   Float        @default(0)
+  deductions    Float        @default(0)
+  netSalary     Float
+  status        SalaryStatus @default(DRAFT)
+  paidAt        DateTime?
+  paidBy        String?
+  notes         String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  employee      Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, month, year])
+}
+
+model SalaryAdvance {
+  id          String      @id @default(cuid())
+  employeeId  String
+  type        AdvanceType
+  amount      Float
+  reason      String
+  date        DateTime    @default(now())
+  recoveredIn String?
+  isRecovered Boolean     @default(false)
+  approvedBy  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  employee    Employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model StoreProductionTask {
+  id          String          @id @default(cuid())
+  storeId     String
+  orderId     String?
+  transferId  String?
+  taskType    StoreTaskType
+  description String?
+  assignedTo  String?
+  status      StoreTaskStatus @default(PENDING)
+  startedAt   DateTime?
+  completedAt DateTime?
+  notes       String?
+  createdBy   String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  assignee    Employee?       @relation("TaskAssignee", fields: [assignedTo], references: [id])
+  store       Store           @relation(fields: [storeId], references: [id])
 }
 
 enum Role {
@@ -178,9 +612,9 @@ enum ProductionStage {
   GRINDING
   FINISHING
   PAINTING
+  COMPLETED
   PLYWOOD_FITTING
   PREPARATION
-  COMPLETED
 }
 
 enum OrderStatus {
@@ -192,61 +626,10 @@ enum OrderStatus {
   CANCELLED
 }
 
-model InventoryItem {
-  id                   String                @id @default(cuid())
-  name                 String
-  sku                  String                @unique
-  category             String
-  quantity             Float
-  unit                 String
-  reorderLevel         Float?
-  price                Float?
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @updatedAt
-}
-
-model StockTransaction {
-  id        String        @id @default(cuid())
-  itemId    String
-  quantity  Float
-  type      StockTxType
-  userId    String
-  timestamp DateTime      @default(now())
-  item      RawMaterial @relation(fields: [itemId], references: [id])
-  user      User        @relation(fields: [userId], references: [id])
-}
-
 enum StockTxType {
   IN
   OUT
   ADJUSTMENT
-}
-
-model Break {
-  id         String    @id @default(cuid())
-  employeeId String
-  startTime  DateTime  @default(now())
-  endTime    DateTime?
-  duration   Int? // in minutes
-  reason     String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  employee   Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-}
-
-model LeaveRequest {
-  id         String      @id @default(cuid())
-  employeeId String
-  leaveType  LeaveType
-  startDate  DateTime
-  endDate    DateTime
-  reason     String
-  status     LeaveStatus @default(PENDING)
-  approvedBy String?
-  approvedAt DateTime?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  employee   Employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 }
 
 enum LeaveType {
@@ -261,40 +644,6 @@ enum LeaveStatus {
   APPROVED
   REJECTED
   CANCELLED
-}
-
-model WastageLog {
-  id           String          @id @default(cuid())
-  employeeId   String
-  orderId      String?
-  materialName String
-  quantity     Float
-  unit         String
-  reason       String
-  stage        ProductionStage
-  photoUrl     String?
-  timestamp    DateTime        @default(now())
-  employee     Employee        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  order        Order?          @relation(fields: [orderId], references: [id])
-}
-
-model MachineStatus {
-  id          String          @id @default(cuid())
-  machineId   String? // Link to Machine model (optional for backward compatibility)
-  machineName String // Keep for legacy/manual entries
-  status      MachineState    @default(OPERATIONAL)
-  issue       String?
-  priority    Priority        @default(MEDIUM)
-  reportedBy  String
-  resolvedBy  String?
-  reportedAt  DateTime        @default(now())
-  resolvedAt  DateTime?
-  stage       ProductionStage
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  machine     Machine?        @relation("MachineMaster", fields: [machineId], references: [id])
-  reporter    Employee        @relation("MachineReporter", fields: [reportedBy], references: [id], onDelete: Cascade)
-  resolver    Employee?       @relation("MachineResolver", fields: [resolvedBy], references: [id], onDelete: SetNull)
 }
 
 enum MachineState {
@@ -328,155 +677,6 @@ enum MaterialType {
   OTHER
 }
 
-// Machine Master - Tracks all machines in the factory
-model Machine {
-  id        String          @id @default(cuid())
-  name      String // "Cutting Machine", "Power Press", etc.
-  code      String          @unique // "CUT-01", "PP-01", etc.
-  stage     ProductionStage // Which production stage this machine belongs to
-  capacity  Int? // Units per hour (optional)
-  branchId  String
-  isActive  Boolean         @default(true)
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-
-  branch            Branch            @relation(fields: [branchId], references: [id])
-  productionEntries ProductionEntry[]
-  machineStatuses   MachineStatus[]   @relation("MachineMaster")
-}
-
-// Production Entry - Tracks operator production on each machine
-model ProductionEntry {
-  id         String          @id @default(cuid())
-  orderId    String
-  machineId  String
-  operatorId String
-  stage      ProductionStage
-
-  // Input/Output tracking
-  inputQuantity     Int // Units received from previous stage
-  outputQuantity    Int // Units successfully produced
-  rejectedQuantity  Int    @default(0) // Defective units
-  wastageQuantity   Float  @default(0) // Scrap/wastage
-  wastagePercentage Float? // Auto-calculated wastage %
-
-  // Time tracking
-  startTime DateTime  @default(now())
-  endTime   DateTime?
-  duration  Int? // Minutes (auto-calculated)
-
-  // Material consumption (JSON array of {materialId, quantity, unit})
-  materialsUsed Json?
-
-  // Quality
-  qualityNotes    String?
-  qualityApproved Boolean   @default(false)
-  approvedBy      String? // Supervisor employee ID
-  approvedAt      DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  order                Order                 @relation(fields: [orderId], references: [id])
-  machine              Machine               @relation(fields: [machineId], references: [id])
-  operator             Employee              @relation("ProductionOperator", fields: [operatorId], references: [id], onDelete: Cascade)
-  approver             Employee?             @relation("ProductionApprover", fields: [approvedBy], references: [id], onDelete: SetNull)
-  materialConsumptions MaterialConsumption[]
-}
-
-// Material Consumption - Detailed tracking of materials used
-model MaterialConsumption {
-  id                String          @id @default(cuid())
-  productionEntryId String?
-  orderId           String
-  materialId        String // Links to InventoryItem
-  materialType      MaterialType
-  quantity          Float
-  unit              String
-  stage             ProductionStage
-  consumedBy        String // Employee ID
-  consumedAt        DateTime        @default(now())
-  notes             String?
-
-  order           Order            @relation(fields: [orderId], references: [id])
-  material        RawMaterial      @relation(fields: [materialId], references: [id])
-  employee        Employee         @relation("MaterialConsumer", fields: [consumedBy], references: [id], onDelete: Cascade)
-  productionEntry ProductionEntry? @relation(fields: [productionEntryId], references: [id])
-}
-
-// ============================================
-// STORE & POS MODULE
-// ============================================
-
-// Store - Retail store/showroom
-model Store {
-  id        String   @id @default(cuid())
-  name      String
-  code      String   @unique
-  address   String
-  phone     String?
-  email     String?
-  gstNumber String?
-  isActive  Boolean  @default(true)
-  managerId String?  @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  manager            User?                 @relation("StoreManager", fields: [managerId], references: [id])
-  inventory          StoreInventory[]
-  stockTransfersTo   StockTransfer[]       @relation("TransferTo")
-  stockTransfersFrom StockTransfer[]       @relation("TransferFrom")
-  posTransactions    POSTransaction[]
-  employees          Employee[]            @relation("StoreEmployees")
-  productionTasks    StoreProductionTask[]
-}
-
-// Store Inventory - Products available in store
-model StoreInventory {
-  id           String   @id @default(cuid())
-  storeId      String
-  productName  String
-  sku          String
-  quantity     Int
-  unit         String
-  costPrice    Float
-  sellingPrice Float
-  reorderLevel Int?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  store Store @relation(fields: [storeId], references: [id])
-
-  @@unique([storeId, sku])
-}
-
-// Stock Transfer - Moving goods from production to store or between stores
-model StockTransfer {
-  id             String             @id @default(cuid())
-  transferNumber String             @unique
-  fromType       TransferSourceType
-  fromBranchId   String?
-  fromStoreId    String?
-  toStoreId      String
-  status         TransferStatus     @default(PENDING)
-  orderId        String?
-  notes          String?
-  transferredBy  String
-  receivedBy     String?
-  transferredAt  DateTime           @default(now())
-  receivedAt     DateTime?
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-
-  fromBranch  Branch?             @relation(fields: [fromBranchId], references: [id])
-  fromStore   Store?              @relation("TransferFrom", fields: [fromStoreId], references: [id])
-  toStore     Store               @relation("TransferTo", fields: [toStoreId], references: [id])
-  order       Order?              @relation(fields: [orderId], references: [id])
-  transferrer User                @relation("Transferrer", fields: [transferredBy], references: [id])
-  receiver    User?               @relation("Receiver", fields: [receivedBy], references: [id])
-  items       StockTransferItem[]
-}
-
 enum TransferSourceType {
   PRODUCTION
   STORE
@@ -489,63 +689,10 @@ enum TransferStatus {
   CANCELLED
 }
 
-// Stock Transfer Items
-model StockTransferItem {
-  id          String @id @default(cuid())
-  transferId  String
-  productName String
-  sku         String
-  quantity    Int
-  unit        String
-
-  transfer StockTransfer @relation(fields: [transferId], references: [id], onDelete: Cascade)
-}
-
-// Customer - Retail customers
-model Customer {
-  id           String       @id @default(cuid())
-  name         String
-  phone        String?
-  email        String?
-  address      String?
-  gstNumber    String?
-  customerType CustomerType @default(RETAIL)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-
-  transactions POSTransaction[]
-}
-
 enum CustomerType {
   RETAIL
   REGULAR
   WHOLESALE
-}
-
-// POS Transaction - Retail sales
-model POSTransaction {
-  id            String        @id @default(cuid())
-  billNumber    String        @unique
-  storeId       String
-  customerId    String?
-  customerName  String?
-  subtotal      Float
-  discount      Float         @default(0)
-  taxAmount     Float         @default(0)
-  totalAmount   Float
-  paymentMethod PaymentMethod
-  paymentStatus PaymentStatus @default(COMPLETED)
-  cashierId     String
-  notes         String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-
-  store           Store                @relation(fields: [storeId], references: [id])
-  customer        Customer?            @relation(fields: [customerId], references: [id])
-  cashier         User                 @relation(fields: [cashierId], references: [id])
-  items           POSTransactionItem[]
-  payments        Payment[]
-  accountingEntry AccountingEntry?
 }
 
 enum PaymentMethod {
@@ -562,48 +709,6 @@ enum PaymentStatus {
   CANCELLED
 }
 
-// POS Transaction Items
-model POSTransactionItem {
-  id            String @id @default(cuid())
-  transactionId String
-  productName   String
-  sku           String
-  quantity      Int
-  unitPrice     Float
-  discount      Float  @default(0)
-  taxRate       Float  @default(0)
-  totalPrice    Float
-
-  transaction POSTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
-}
-
-// Payment - Payment details for POS transactions
-model Payment {
-  id            String        @id @default(cuid())
-  transactionId String
-  method        PaymentMethod
-  amount        Float
-  reference     String?
-  createdAt     DateTime      @default(now())
-
-  transaction POSTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
-}
-
-// Accounting Entry - Double-entry bookkeeping
-model AccountingEntry {
-  id            String         @id @default(cuid())
-  entryType     AccountingType
-  transactionId String?        @unique
-  description   String
-  debitAccount  String
-  creditAccount String
-  amount        Float
-  date          DateTime       @default(now())
-  createdAt     DateTime       @default(now())
-
-  transaction POSTransaction? @relation(fields: [transactionId], references: [id])
-}
-
 enum AccountingType {
   SALE
   PURCHASE
@@ -611,106 +716,6 @@ enum AccountingType {
   TRANSFER
   ADJUSTMENT
 }
-
-// ============================================
-// MARKETING HEAD MODULE
-// ============================================
-
-// Raw Material - Inventory managed by Marketing Head
-model RawMaterial {
-  id           String   @id @default(cuid())
-  name         String
-  category     String // M.S Sheet, Handel, Hinges, etc.
-  unit         String // kg, pieces, liters, etc.
-  quantity     Float    @default(0)
-  reorderLevel Float?
-  currentPrice Float? // Latest purchase price
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  purchases         RawMaterialPurchase[]
-  usage             RawMaterialUsage[]
-  stockTransactions StockTransaction[]
-  consumptions      MaterialConsumption[]
-  allocations       MaterialAllocation[]
-}
-
-// Seller - Suppliers of raw materials
-model Seller {
-  id        String   @id @default(cuid())
-  name      String
-  contact   String?
-  phone     String?
-  email     String?
-  address   String?
-  gstNumber String?
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  purchases RawMaterialPurchase[]
-}
-
-// Raw Material Purchase - Purchase records
-model RawMaterialPurchase {
-  id                 String    @id @default(cuid())
-  sellerId           String
-  materialId         String
-  quantity           Float
-  unit               String
-  pricePerUnit       Float
-  totalPrice         Float
-  transportationCost Float     @default(0)
-  grandTotal         Float // totalPrice + transportationCost
-  billNumber         String?
-  billDate           DateTime?
-  purchaseDate       DateTime  @default(now())
-  notes              String?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-
-  seller   Seller      @relation(fields: [sellerId], references: [id])
-  material RawMaterial @relation(fields: [materialId], references: [id])
-}
-
-// Raw Material Usage - Track consumption
-model RawMaterialUsage {
-  id         String   @id @default(cuid())
-  materialId String
-  quantity   Float
-  unit       String
-  usedFor    String? // Purpose/Project
-  usedBy     String? // Employee/Department
-  notes      String?
-  usedAt     DateTime @default(now())
-  createdAt  DateTime @default(now())
-
-  material RawMaterial @relation(fields: [materialId], references: [id])
-}
-
-// Final Product Sale - Sales managed by Marketing Head
-model FinalProductSale {
-  id              String   @id @default(cuid())
-  productName     String
-  description     String?
-  quantity        Int
-  unit            String   @default("pieces")
-  pricePerUnit    Float
-  totalPrice      Float
-  customerName    String?
-  customerPhone   String?
-  customerAddress String?
-  saleDate        DateTime @default(now())
-  paymentStatus   String   @default("PENDING") // PENDING, PAID, PARTIAL
-  paidAmount      Float    @default(0)
-  notes           String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-}
-
-// ============================================
-// SALARY & PAYROLL MODULE
-// ============================================
 
 enum SalaryType {
   MONTHLY
@@ -729,55 +734,6 @@ enum AdvanceType {
   BONUS
 }
 
-// SalaryRecord - Monthly payroll run for an employee
-model SalaryRecord {
-  id             String       @id @default(cuid())
-  employeeId     String
-  month          Int          // 1-12
-  year           Int
-  workingDays    Int          // Total working days in month
-  presentDays    Int          // Employee present days (from attendance)
-  absentDays     Int          @default(0)
-  baseSalary     Float        // From employee's salary structure
-  salaryType     SalaryType
-  earnedSalary   Float        // Calculated: baseSalary * (presentDays/workingDays)
-  advanceAmount  Float        @default(0) // Total advance deductions
-  bonusAmount    Float        @default(0) // Bonuses added
-  deductions     Float        @default(0) // Other deductions
-  netSalary      Float        // Final amount after all adjustments
-  status         SalaryStatus @default(DRAFT)
-  paidAt         DateTime?
-  paidBy         String?      // User ID who processed payment
-  notes          String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-
-  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-
-  @@unique([employeeId, month, year])
-}
-
-// SalaryAdvance - Track advance payments and deductions
-model SalaryAdvance {
-  id          String      @id @default(cuid())
-  employeeId  String
-  type        AdvanceType
-  amount      Float
-  reason      String
-  date        DateTime    @default(now())
-  recoveredIn String?     // "2026-03" format — which payroll period to deduct from
-  isRecovered Boolean     @default(false)
-  approvedBy  String?     // User ID
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-}
-
-// ============================================
-// HM1 STORE PRODUCTION TASK MODULE
-// ============================================
-
 enum StoreTaskStatus {
   PENDING
   IN_PROGRESS
@@ -789,25 +745,4 @@ enum StoreTaskType {
   PAINTING
   FINISHING
   OTHER
-}
-
-// StoreProductionTask - Work done at HM1 store on received orders
-model StoreProductionTask {
-  id           String          @id @default(cuid())
-  storeId      String
-  orderId      String?         // Linked order (optional)
-  transferId   String?         // Linked stock transfer (optional)
-  taskType     StoreTaskType
-  description  String?
-  assignedTo   String?         // Employee ID
-  status       StoreTaskStatus @default(PENDING)
-  startedAt    DateTime?
-  completedAt  DateTime?
-  notes        String?
-  createdBy    String          // User ID
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-
-  store    Store     @relation(fields: [storeId], references: [id])
-  assignee Employee? @relation("TaskAssignee", fields: [assignedTo], references: [id], onDelete: SetNull)
 }

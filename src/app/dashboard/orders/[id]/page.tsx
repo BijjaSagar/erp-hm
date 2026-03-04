@@ -98,8 +98,8 @@ export default async function OrderDetailPage({ params }: { params: { id: string
                         <ApproveOrderButton orderId={order.id} />
                     )}
 
-                    {/* Branch-Specific HP1 Transfer Logic: After Finishing → Generate Bill + Transfer to HM1 */}
-                    {(order.currentStage === "FINISHING" || order.currentStage === "COMPLETED") && order.branch?.code === "HP1" && (
+                    {/* Branch-Specific Transfer Logic: After Finishing → Generate Bill + Transfer to HM1 */}
+                    {(order.currentStage === "FINISHING" || order.currentStage === "COMPLETED") && order.branch?.code !== "HM1" && (
                         <BillAndTransferButton
                             order={{
                                 id: order.id,
