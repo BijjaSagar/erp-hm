@@ -2,8 +2,8 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
-import { Role } from "@prisma/client";
 import { compare } from "bcryptjs";
+import { authConfig } from "./auth.config";
 
 // Define schema for credentials validation
 const signInSchema = z.object({
@@ -12,7 +12,7 @@ const signInSchema = z.object({
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-    trustHost: true, // Automatically trust the host header (required for Vercel)
+    ...authConfig,
     providers: [
         Credentials({
             credentials: {
@@ -53,45 +53,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
         }),
     ],
-    callbacks: {
-        async jwt({ token, user }) {
-            if (user) {
-                token.id = user.id;
-                token.role = user.role as Role;
-                token.branchId = user.branchId as string | null;
-                // @ts-ignore
-                token.employeeId = user.employeeId as string | null;
-            }
-            return token;
-        },
-        async session({ session, token }) {
-            if (token && session.user) {
-                session.user.id = token.id as string;
-                session.user.role = token.role as Role;
-                session.user.branchId = token.branchId as string | null;
-                // @ts-ignore
-                session.user.employeeId = token.employeeId as string | null;
-            }
-            return session;
-        },
-        async authorized({ auth, request: { nextUrl } }) {
-            const isLoggedIn = !!auth?.user;
-            const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-            const isOnLogin = nextUrl.pathname.startsWith('/login');
-
-            if (isOnDashboard) {
-                if (isLoggedIn) return true;
-                return false; // Redirect unauthenticated users to login page
-            } else if (isLoggedIn && isOnLogin) {
-                return Response.redirect(new URL('/dashboard', nextUrl));
-            }
-            return true;
-        },
-    },
-    pages: {
-        signIn: "/login",
-    },
-    session: {
-        strategy: "jwt",
-    },
 });
