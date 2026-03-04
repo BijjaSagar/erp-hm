@@ -3,9 +3,8 @@ export const dynamic = 'force-dynamic';
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import PrintableInvoice from "@/components/invoice/printable-invoice";
-import { Button } from "@/components/ui/button";
-import { Printer, Download, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import InvoiceClientButtons from "./client-buttons";
 
 async function getInvoiceData(billNumber: string) {
     try {
@@ -62,31 +61,7 @@ export default async function InvoicePage({ params }: { params: { billNumber: st
     return (
         <div className="min-h-screen bg-gray-100 py-8">
             <div className="max-w-4xl mx-auto px-4">
-                {/* Action Buttons */}
-                <div className="mb-6 flex items-center justify-between no-print">
-                    <Link href="/dashboard/pos">
-                        <Button variant="outline">
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            Back to POS
-                        </Button>
-                    </Link>
-                    <div className="flex gap-2">
-                        <Button
-                            onClick={() => window.print()}
-                            className="bg-blue-600 hover:bg-blue-700"
-                        >
-                            <Printer className="mr-2 h-4 w-4" />
-                            Print Invoice
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => window.print()}
-                        >
-                            <Download className="mr-2 h-4 w-4" />
-                            Download PDF
-                        </Button>
-                    </div>
-                </div>
+                <InvoiceClientButtons />
 
                 {/* Invoice */}
                 <PrintableInvoice invoice={invoiceData} />
