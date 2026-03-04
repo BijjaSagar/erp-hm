@@ -57,7 +57,7 @@ export async function createAccountingEntry(data: {
     date?: Date;
 }) {
     const session = await auth();
-    if (!session || (session.user.role !== "ADMIN" && session.user.role !== "ACCOUNTANT")) {
+    if (!session || (session.user.role !== "ADMIN" && session.user.role !== "ACCOUNTANT" && session.user.role !== "BRANCH_MANAGER")) {
         return { message: "Unauthorized" };
     }
 
@@ -206,7 +206,7 @@ export async function getDailyReport(storeId: string, date: Date) {
 
 export async function getFinancialOverview(startDate?: Date, endDate?: Date) {
     const session = await auth();
-    if (!session || !["ADMIN", "ACCOUNTANT"].includes(session.user.role)) {
+    if (!session || !["ADMIN", "ACCOUNTANT", "BRANCH_MANAGER"].includes(session.user.role)) {
         return null;
     }
 
@@ -271,7 +271,7 @@ export async function getFinancialOverview(startDate?: Date, endDate?: Date) {
 
 export async function getRevenueTrends(period: 'daily' | 'weekly' | 'monthly' = 'monthly', months: number = 6) {
     const session = await auth();
-    if (!session || !["ADMIN", "ACCOUNTANT"].includes(session.user.role)) {
+    if (!session || !["ADMIN", "ACCOUNTANT", "BRANCH_MANAGER"].includes(session.user.role)) {
         return [];
     }
 
@@ -325,7 +325,7 @@ export async function getRevenueTrends(period: 'daily' | 'weekly' | 'monthly' = 
 
 export async function getExpenseBreakdown(startDate?: Date, endDate?: Date) {
     const session = await auth();
-    if (!session || !["ADMIN", "ACCOUNTANT"].includes(session.user.role)) {
+    if (!session || !["ADMIN", "ACCOUNTANT", "BRANCH_MANAGER"].includes(session.user.role)) {
         return [];
     }
 
@@ -361,7 +361,7 @@ export async function getExpenseBreakdown(startDate?: Date, endDate?: Date) {
 
 export async function getTopRevenueProducts(limit: number = 10, startDate?: Date, endDate?: Date) {
     const session = await auth();
-    if (!session || !["ADMIN", "ACCOUNTANT"].includes(session.user.role)) {
+    if (!session || !["ADMIN", "ACCOUNTANT", "BRANCH_MANAGER"].includes(session.user.role)) {
         return [];
     }
 
@@ -409,7 +409,7 @@ export async function getTopRevenueProducts(limit: number = 10, startDate?: Date
 
 export async function getCashFlowSummary(startDate?: Date, endDate?: Date) {
     const session = await auth();
-    if (!session || !["ADMIN", "ACCOUNTANT"].includes(session.user.role)) {
+    if (!session || !["ADMIN", "ACCOUNTANT", "BRANCH_MANAGER"].includes(session.user.role)) {
         return null;
     }
 

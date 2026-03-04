@@ -93,8 +93,21 @@ export async function generateInvoice(prevState: any, formData: FormData) {
 }
 
 export async function getInvoices() {
+    const session = await auth();
+    if (!session) return [];
+
     try {
+        const where: any = {};
+
+        // If user is a branch manager, only show invoices for their branch
+        if (session.user.role === "BRANCH_MANAGER" && session.user.branchId) {
+            where.order = {
+                branchId: session.user.branchId
+            };
+        }
+
         const invoices = await prisma.invoice.findMany({
+            where,
             include: {
                 order: {
                     include: {
@@ -187,14 +200,24 @@ export async function updateInvoice(id: string, prevState: any, formData: FormDa
 }
 
 export async function getCompletedOrdersWithoutInvoice() {
+    const session = await auth();
+    if (!session) return [];
+
     try {
-        const orders = await prisma.order.findMany({
-            where: {
-                status: "COMPLETED",
-                invoices: {
-                    none: {},
-                },
+        const where: any = {
+            status: "COMPLETED",
+            invoices: {
+                none: {},
             },
+        };
+
+        // If user is a branch manager, only show orders for their branch
+        if (session.user.role === "BRANCH_MANAGER" && session.user.branchId) {
+            where.branchId = session.user.branchId;
+        }
+
+        const orders = await prisma.order.findMany({
+            where,
             include: {
                 items: true,
                 branch: true,

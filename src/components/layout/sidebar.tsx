@@ -83,7 +83,7 @@ const routes = [
         icon: FileText,
         href: "/dashboard/invoices",
         color: "text-blue-400",
-        roles: ["ADMIN", "ACCOUNTANT"],
+        roles: ["ADMIN", "ACCOUNTANT", "BRANCH_MANAGER"],
     },
     {
         name: "Stores",
@@ -118,7 +118,7 @@ const routes = [
         icon: DollarSign,
         href: "/dashboard/accounting",
         color: "text-emerald-400",
-        roles: ["ADMIN", "ACCOUNTANT"],
+        roles: ["ADMIN", "ACCOUNTANT", "BRANCH_MANAGER"],
     },
     {
         name: "Operator Dashboard",
