@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { Role } from "@prisma/client";
+import { compare } from "bcryptjs";
 
 // Define schema for credentials validation
 const signInSchema = z.object({
@@ -35,9 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     return null;
                 }
 
-                // Use bcrypt for password comparison
-                const bcrypt = require('bcryptjs');
-                const isPasswordValid = await bcrypt.compare(password, user.password);
+                const isPasswordValid = await compare(password, user.password);
 
                 if (!isPasswordValid) {
                     return null;
