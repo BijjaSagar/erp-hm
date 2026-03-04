@@ -249,7 +249,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
                                                             </td>
                                                             <td className="px-4 py-2 font-medium">{cons.material.name}</td>
                                                             <td className="px-4 py-2 text-right font-mono">{cons.quantity} {cons.unit}</td>
-                                                            <td className="px-4 py-2">{cons.employee.name}</td>
+                                                            <td className="px-4 py-2">{cons.employee?.name || "Deleted Employee"}</td>
                                                             <td className="px-4 py-2 text-right text-xs text-muted-foreground">
                                                                 {new Date(cons.consumedAt).toLocaleString()}
                                                             </td>

@@ -198,7 +198,8 @@ export async function getOrderById(id: string) {
                 },
                 materialConsumptions: {
                     include: {
-                        material: true
+                        material: true,
+                        employee: true
                     }
                 }
             },
