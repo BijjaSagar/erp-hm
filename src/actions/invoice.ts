@@ -17,17 +17,30 @@ async function generateInvoiceNumber(): Promise<string> {
     const today = new Date();
     const year = today.getFullYear().toString().slice(-2);
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const prefix = `INV${year}${month}`;
 
-    const count = await prisma.invoice.count({
+    const lastInvoice = await prisma.invoice.findFirst({
         where: {
-            generatedAt: {
-                gte: new Date(today.setHours(0, 0, 0, 0)),
+            invoiceNo: {
+                startsWith: prefix,
             },
+        },
+        orderBy: {
+            invoiceNo: 'desc',
+        },
+        select: {
+            invoiceNo: true,
         },
     });
 
-    const sequence = (count + 1).toString().padStart(4, '0');
-    return `INV${year}${month}${sequence}`;
+    let sequence = 1;
+    if (lastInvoice) {
+        const lastSequence = parseInt(lastInvoice.invoiceNo.slice(-4));
+        sequence = lastSequence + 1;
+    }
+
+    const sequenceStr = sequence.toString().padStart(4, '0');
+    return `${prefix}${sequenceStr}`;
 }
 
 // Re-export utility functions for backward compatibility
@@ -85,6 +98,10 @@ export async function generateInvoice(prevState: any, formData: FormData) {
         };
     } catch (error) {
         console.error("Error generating invoice:", error);
+        if (error instanceof Error) {
+            console.error("Error message:", error.message);
+            console.error("Error stack:", error.stack);
+        }
         if (error instanceof z.ZodError) {
             return { message: error.issues[0].message };
         }
