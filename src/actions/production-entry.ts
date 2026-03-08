@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { ProductionStage } from "@prisma/client";
+import { PRODUCTION_STAGES_ORDER } from "@/lib/constants";
 
 /**
  * Start a new production entry
@@ -175,7 +176,7 @@ export async function approveProductionEntry(
         });
 
         // Move order to next stage after approval
-        const stages = Object.values(ProductionStage);
+        const stages = PRODUCTION_STAGES_ORDER;
         const currentStageIndex = stages.indexOf(entry.stage);
         const nextStage = currentStageIndex < stages.length - 1
             ? stages[currentStageIndex + 1]

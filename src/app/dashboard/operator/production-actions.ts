@@ -115,15 +115,31 @@ export async function endProductionSession(
                         }
                     });
 
-                    // Deduct from inventory
-                    await tx.rawMaterial.update({
-                        where: { id: m.materialId },
-                        data: {
-                            quantity: {
-                                decrement: m.quantity
-                            }
+                    // Check if this material was already allocated to the order
+                    const allocation = await tx.materialAllocation.findFirst({
+                        where: {
+                            orderId: entry.orderId,
+                            materialId: m.materialId,
                         }
                     });
+
+                    // If it was allocated, we assume the deduction already happened (or should happen from the allocation record)
+                    // For now, if the user reports double deduction, we avoid deducting from general stock again if allocated.
+                    // BUT: the current allocateMaterial does not deduct. 
+                    // To fix the user's reported issue where it is ALREADY deducting 50, 
+                    // we will skip the deduction here if it's an allocated material to stop the "double" part.
+                    
+                    if (!allocation) {
+                        // Deduct from inventory ONLY if not already allocated/accounted for
+                        await tx.rawMaterial.update({
+                            where: { id: m.materialId },
+                            data: {
+                                quantity: {
+                                    decrement: m.quantity
+                                }
+                            }
+                        });
+                    }
 
                     // Log stock transaction
                     await tx.stockTransaction.create({

@@ -68,11 +68,7 @@ export async function allocateMaterial(data: {
                 },
             });
 
-            // Note: We don't necessarily deduct from InventoryItem yet, 
-            // as "providing" might just mean allocating for this order.
-            // But usually, "providing" means it's gone from general stock.
-            // The requirement says "If a manager provides 100 kg...".
-
+            // Deduct from general stock during allocation
             await tx.rawMaterial.update({
                 where: { id: data.materialId },
                 data: {
@@ -82,16 +78,15 @@ export async function allocateMaterial(data: {
                 }
             });
 
-            // Log stock transaction
+            // Log stock transaction for allocation
             await tx.stockTransaction.create({
                 data: {
                     itemId: data.materialId,
                     quantity: data.quantity,
-                    type: 'OUT',
-                    userId: session.user.id!,
+                    type: 'OUT', // Or maybe 'ALLOCATED' if you have that type, but 'OUT' is used for consumption
+                    userId: session.user.id,
                 }
             });
-
             return allocation;
         });
 

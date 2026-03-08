@@ -4,27 +4,38 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { TransferSourceType, TransferStatus, ProductionStage } from "@prisma/client";
+import { PRODUCTION_STAGES_ORDER } from "@/lib/constants";
 
-// Generate unique transfer number
 async function generateTransferNumber(): Promise<string> {
     const today = new Date();
     const year = today.getFullYear().toString().slice(-2);
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const prefix = `TRF${year}${month}`;
 
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
-
-    const count = await prisma.stockTransfer.count({
+    const lastTransfer = await prisma.stockTransfer.findFirst({
         where: {
-            createdAt: {
-                gte: startOfDay,
-                lte: endOfDay,
+            transferNumber: {
+                startsWith: prefix,
             },
+        },
+        orderBy: {
+            transferNumber: 'desc',
+        },
+        select: {
+            transferNumber: true,
         },
     });
 
-    const sequence = (count + 1).toString().padStart(4, '0');
-    return `TRF${year}${month}${sequence}`;
+    let sequence = 1;
+    if (lastTransfer) {
+        const lastSequence = parseInt(lastTransfer.transferNumber.slice(-4));
+        if (!isNaN(lastSequence)) {
+            sequence = lastSequence + 1;
+        }
+    }
+
+    const sequenceStr = sequence.toString().padStart(4, '0');
+    return `${prefix}${sequenceStr}`;
 }
 
 export async function createStockTransfer(prevState: any, formData: FormData) {
@@ -285,15 +296,18 @@ export async function transferFromProduction(
             where: { code: "HM1" }
         });
 
-        // Determine next stage: if it's Finishing, move to Painting. If already Completed, stay there.
-        const nextStage = order.currentStage === "FINISHING" ? ProductionStage.PAINTING : order.currentStage;
+        // Determine next stage using central constants
+        const stages = PRODUCTION_STAGES_ORDER;
+
+        const currentIndex = stages.indexOf(order.currentStage);
+        const nextStage = currentIndex < stages.length - 1 ? stages[currentIndex + 1] : order.currentStage;
 
         // Update the order: Move to HM1 branch and advance stage
         await prisma.order.update({
             where: { id: orderId },
             data: {
                 currentStage: nextStage,
-                status: nextStage === "COMPLETED" ? "COMPLETED" : "IN_PRODUCTION",
+                status: nextStage === ProductionStage.COMPLETED ? "COMPLETED" : "IN_PRODUCTION",
                 branchId: targetBranch?.id || order.branchId, // Move to HM1 branch if found
             }
         });
@@ -303,7 +317,7 @@ export async function transferFromProduction(
         return { message: "Transfer created successfully", transferNumber };
     } catch (error) {
         console.error("Error creating transfer from production:", error);
-        return { message: "Failed to create transfer" };
+        return { message: "Failed to create transfer: " + (error instanceof Error ? error.message : String(error)) };
     }
 }
 

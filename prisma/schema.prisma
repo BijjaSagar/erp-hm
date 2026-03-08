@@ -612,9 +612,9 @@ enum ProductionStage {
   GRINDING
   FINISHING
   PAINTING
-  COMPLETED
   PLYWOOD_FITTING
   PREPARATION
+  COMPLETED
 }
 
 enum OrderStatus {

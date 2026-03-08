@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { getOrderById, deleteOrder } from "@/actions/order";
 import { getInventoryItems } from "@/actions/raw-material";
 import { auth } from "@/auth";
+import { PRODUCTION_STAGES_ORDER } from "@/lib/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,10 +40,7 @@ const stageColors: Record<string, string> = {
     COMPLETED: "bg-green-100 text-green-800",
 };
 
-const productionStages = [
-    "PENDING", "CUTTING", "SHAPING", "BENDING",
-    "WELDING_INNER", "WELDING_OUTER", "GRINDING", "FINISHING", "PAINTING", "PLYWOOD_FITTING", "PREPARATION", "COMPLETED"
-];
+const productionStages = PRODUCTION_STAGES_ORDER;
 
 export default async function OrderDetailPage({ params }: { params: { id: string } }) {
     const session = await auth();

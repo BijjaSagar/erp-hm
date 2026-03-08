@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { ProductionStage, OrderStatus } from "@prisma/client";
+import { PRODUCTION_STAGES_ORDER } from "@/lib/constants";
 
 export async function createProductionLog(
     orderId: string,
@@ -113,10 +114,14 @@ export async function updateProductionStage(
             return { message: "Order not found" };
         }
 
-        // Validate stage progression
-        const stages = Object.values(ProductionStage);
+        // Validate stage progression using central constants
+        const stages = PRODUCTION_STAGES_ORDER;
         const currentStageIndex = stages.indexOf(order.currentStage);
         const newStageIndex = stages.indexOf(stage);
+
+        if (newStageIndex === -1) {
+            return { message: "Invalid stage selected" };
+        }
 
         if (newStageIndex < currentStageIndex) {
             return { message: "Cannot move to a previous stage" };
