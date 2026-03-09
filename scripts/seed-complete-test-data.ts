@@ -23,7 +23,8 @@ async function main() {
     console.log('👥 Creating operators...');
     const stages: ProductionStage[] = [
         'CUTTING', 'SHAPING', 'BENDING', 'WELDING_INNER',
-        'WELDING_OUTER', 'GRINDING', 'FINISHING', 'PAINTING'
+        'WELDING_OUTER', 'GRINDING', 'FINISHING', 'PAINTING',
+        'PLYWOOD_FITTING', 'PREPARATION'
     ];
 
     const operators = [];
@@ -79,7 +80,9 @@ async function main() {
         'WELDING_OUTER': 'WO',
         'GRINDING': 'GRD',
         'FINISHING': 'FIN',
-        'PAINTING': 'PNT'
+        'PAINTING': 'PNT',
+        'PLYWOOD_FITTING': 'PF',
+        'PREPARATION': 'PRP'
     };
 
     for (const stage of stages) {

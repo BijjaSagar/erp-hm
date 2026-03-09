@@ -61,6 +61,16 @@ async function main() {
             email: 'painting@test.com',
             stages: [ProductionStage.PAINTING],
         },
+        {
+            name: 'Plywood Fitting Operator',
+            email: 'plywood@test.com',
+            stages: [ProductionStage.PLYWOOD_FITTING],
+        },
+        {
+            name: 'Preparation Operator',
+            email: 'preparation@test.com',
+            stages: [ProductionStage.PREPARATION],
+        },
     ];
 
     console.log('Seeding operators...');
