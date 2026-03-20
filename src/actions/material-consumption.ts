@@ -66,18 +66,15 @@ export async function recordMaterialConsumption(
         
         if (remainingAllocation > 0) {
             // We have an allocation that already deducted from general stock.
-            // If the current consumption is within the allocation, we might need to "refund" some stock 
-            // if this is the final consumption or if the user expects stock to match (Initial - ActuallyUsed).
-            
-            if (quantity <= remainingAllocation) {
-                // This consumption is fully covered by the remaining allocation.
-                // Since the full allocation was already deducted from stock, 
-                // we should "refund" the unused part of the allocation back to general stock.
-                stockAdjustment = remainingAllocation - quantity; 
-            } else {
+            if (quantity > remainingAllocation) {
                 // This consumption exceeds the allocation.
                 // We draw the remaining allocation (no deduction) and deduct the excess from general stock.
                 stockAdjustment = -(quantity - remainingAllocation);
+            } else {
+                // This consumption is fully covered by the remaining allocation.
+                // Since the full allocation was already deducted from stock, 
+                // we do nothing to the general stock. The allocation handles it.
+                stockAdjustment = 0;
             }
         } else {
             // No allocation, or it's already used up. Deduct full quantity from stock.
@@ -110,22 +107,22 @@ export async function recordMaterialConsumption(
         });
 
         // Update inventory based on calculated adjustment
-        if (stockAdjustment !== 0) {
+        if (stockAdjustment < 0) {
             await prisma.rawMaterial.update({
                 where: { id: materialId },
                 data: {
                     quantity: {
-                        increment: stockAdjustment, // Negative handles decrement
+                        decrement: Math.abs(stockAdjustment),
                     },
                 },
             });
 
-            // Create stock transaction record for the adjustment
+            // Create stock transaction record for the decrement
             await prisma.stockTransaction.create({
                 data: {
                     itemId: materialId,
-                    quantity: stockAdjustment,
-                    type: stockAdjustment > 0 ? "IN" : "OUT",
+                    quantity: Math.abs(stockAdjustment),
+                    type: "OUT",
                     userId: consumedBy,
                 },
             });
@@ -435,10 +432,10 @@ export async function bulkRecordMaterialConsumption(
 
             let stockAdjustment = 0;
             if (remainingAllocation > 0) {
-                if (material.quantity <= remainingAllocation) {
-                    stockAdjustment = remainingAllocation - material.quantity;
-                } else {
+                if (material.quantity > remainingAllocation) {
                     stockAdjustment = -(material.quantity - remainingAllocation);
+                } else {
+                    stockAdjustment = 0;
                 }
             } else {
                 stockAdjustment = -material.quantity;
@@ -469,12 +466,12 @@ export async function bulkRecordMaterialConsumption(
             });
 
             // Update inventory and log transaction if needed
-            if (stockAdjustment !== 0) {
+            if (stockAdjustment < 0) {
                 await prisma.rawMaterial.update({
                     where: { id: material.materialId },
                     data: {
                         quantity: {
-                            increment: stockAdjustment,
+                            decrement: Math.abs(stockAdjustment),
                         },
                     },
                 });
@@ -482,8 +479,8 @@ export async function bulkRecordMaterialConsumption(
                 await prisma.stockTransaction.create({
                     data: {
                         itemId: material.materialId,
-                        quantity: stockAdjustment,
-                        type: stockAdjustment > 0 ? "IN" : "OUT",
+                        quantity: Math.abs(stockAdjustment),
+                        type: "OUT",
                         userId: consumedBy,
                     },
                 });
@@ -508,5 +505,79 @@ export async function bulkRecordMaterialConsumption(
     } catch (error) {
         console.error("Error bulk recording material consumption:", error);
         return { message: "Failed to record material consumption" };
+    }
+}
+
+/**
+ * Reconcile material allocations for an order
+ * Returns leftovers to general stock when order is completed
+ */
+export async function reconcileOrderMaterials(orderId: string) {
+    const session = await auth();
+    if (!session) return { message: "Unauthorized" };
+
+    try {
+        // 1. Get all allocations for this order
+        const allocations = await prisma.materialAllocation.findMany({
+            where: { orderId },
+        });
+
+        if (allocations.length === 0) return { message: "No allocations to reconcile" };
+
+        // 2. Get all consumptions for this order
+        const consumptions = await prisma.materialConsumption.findMany({
+            where: { orderId },
+        });
+
+        // 3. Group by material
+        const allocationMap = allocations.reduce((acc, a) => {
+            acc[a.materialId] = (acc[a.materialId] || 0) + a.quantity;
+            return acc;
+        }, {} as Record<string, number>);
+
+        const consumptionMap = consumptions.reduce((acc, c) => {
+            acc[c.materialId] = (acc[c.materialId] || 0) + c.quantity;
+            return acc;
+        }, {} as Record<string, number>);
+
+        // 4. Calculate leftovers and update stock
+        const results = [];
+        for (const [materialId, totalAllocated] of Object.entries(allocationMap)) {
+            const totalConsumed = consumptionMap[materialId] || 0;
+            const leftover = totalAllocated - totalConsumed;
+
+            if (leftover > 0) {
+                // Return to general stock
+                await prisma.rawMaterial.update({
+                    where: { id: materialId },
+                    data: {
+                        quantity: {
+                            increment: leftover,
+                        },
+                    },
+                });
+
+                // Log transaction
+                await prisma.stockTransaction.create({
+                    data: {
+                        itemId: materialId,
+                        quantity: leftover,
+                        type: "IN",
+                        userId: session.user.id!,
+                        timestamp: new Date(),
+                    },
+                });
+
+                results.push({ materialId, leftover, status: "refunded" });
+            }
+        }
+
+        return {
+            message: "Materials reconciled successfully",
+            results,
+        };
+    } catch (error) {
+        console.error("Error reconciling materials:", error);
+        return { message: "Failed to reconcile materials" };
     }
 }

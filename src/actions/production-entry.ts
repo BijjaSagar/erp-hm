@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { ProductionStage } from "@prisma/client";
 import { PRODUCTION_STAGES_ORDER } from "@/lib/constants";
+import { reconcileOrderMaterials } from "./material-consumption";
 
 /**
  * Start a new production entry
@@ -191,6 +192,11 @@ export async function approveProductionEntry(
                     : "IN_PRODUCTION",
             },
         });
+
+        // If order completed, reconcile materials
+        if (nextStage === ProductionStage.COMPLETED) {
+            await reconcileOrderMaterials(entry.orderId);
+        }
 
         // Create production log
         await prisma.productionLog.create({

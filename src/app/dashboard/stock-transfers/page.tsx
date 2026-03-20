@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TransferStatusBadge } from "@/components/transfer-status-badge";
 import Link from "next/link";
+import { auth } from "@/auth";
 import {
     Package,
     Plus,
@@ -13,6 +14,8 @@ import {
 } from "lucide-react";
 
 export default async function StockTransfersPage() {
+    const session = await auth();
+    const role = session?.user?.role;
     const transfers = await getStockTransfers();
     const stores = await getStoresForTransfer();
 
@@ -33,12 +36,14 @@ export default async function StockTransfersPage() {
                         Manage transfers from production to stores
                     </p>
                 </div>
-                <Link href="/dashboard/stock-transfers/new">
-                    <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
-                        <Plus className="h-4 w-4 mr-2" />
-                        New Transfer
-                    </Button>
-                </Link>
+                {role !== "ADMIN" && (
+                    <Link href="/dashboard/stock-transfers/new">
+                        <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
+                            <Plus className="h-4 w-4 mr-2" />
+                            New Transfer
+                        </Button>
+                    </Link>
+                )}
             </div>
 
             {/* Stats Cards */}
@@ -164,14 +169,16 @@ export default async function StockTransfersPage() {
                                 No transfers yet
                             </p>
                             <p className="text-sm text-muted-foreground mt-1">
-                                Create your first transfer from a completed production order
+                                {role === "ADMIN" ? "Waiting for transfers from production team" : "Create your first transfer from a completed production order"}
                             </p>
-                            <Link href="/dashboard/stock-transfers/new">
-                                <Button className="mt-4" variant="outline">
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Create Transfer
-                                </Button>
-                            </Link>
+                            {role !== "ADMIN" && (
+                                <Link href="/dashboard/stock-transfers/new">
+                                    <Button className="mt-4" variant="outline">
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Create Transfer
+                                    </Button>
+                                </Link>
+                            )}
                         </div>
                     )}
                 </CardContent>

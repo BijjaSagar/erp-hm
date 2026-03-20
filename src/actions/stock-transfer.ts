@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { TransferSourceType, TransferStatus, ProductionStage } from "@prisma/client";
 import { PRODUCTION_STAGES_ORDER } from "@/lib/constants";
+import { reconcileOrderMaterials } from "./material-consumption";
 
 async function generateTransferNumber(): Promise<string> {
     const today = new Date();
@@ -312,6 +313,11 @@ export async function transferFromProduction(
             }
         });
 
+        // Reconcile materials if order reached completion
+        if (nextStage === ProductionStage.COMPLETED) {
+            await reconcileOrderMaterials(orderId);
+        }
+
         revalidatePath("/dashboard/stock-transfer");
         revalidatePath(`/dashboard/orders/${orderId}`);
         return { message: "Transfer created successfully", transferNumber };
@@ -424,7 +430,7 @@ export async function getStoreInventory(storeId: string) {
 // Get inventory overview (all stores)
 export async function getInventoryOverview() {
     const session = await auth();
-    if (!session || !["ADMIN", "PRODUCTION_SUPERVISOR"].includes(session.user.role)) {
+    if (!session || !["ADMIN", "PRODUCTION_SUPERVISOR", "BRANCH_MANAGER"].includes(session.user.role)) {
         return { inventory: [], stats: { totalProducts: 0, totalQuantity: 0, totalValue: 0, lowStockCount: 0 } };
     }
 

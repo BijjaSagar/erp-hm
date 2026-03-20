@@ -79,63 +79,70 @@ const routes = [
         roles: ["ADMIN", "PRODUCTION_SUPERVISOR", "BRANCH_MANAGER", "STORE_MANAGER"],
     },
     {
-        name: "Finance & Invoices",
+        label: "Finance & Invoices",
         icon: FileText,
         href: "/dashboard/invoices",
         color: "text-blue-400",
         roles: ["ADMIN", "ACCOUNTANT", "BRANCH_MANAGER"],
     },
     {
-        name: "Stores",
+        label: "Stores",
         icon: Store,
         href: "/dashboard/stores",
-        color: "text-purple-400",
         roles: ["ADMIN", "STORE_MANAGER"],
+        color: "text-purple-400",
     },
     {
-        name: "POS",
+        label: "POS",
         icon: ShoppingCart,
         href: "/dashboard/pos",
         color: "text-cyan-400",
         roles: ["ADMIN", "STORE_MANAGER"],
     },
     {
-        name: "Contra Entry",
+        label: "Contra Entry",
         icon: FileText,
         href: "/dashboard/pos/contra-entry",
         color: "text-teal-400",
         roles: ["ADMIN", "STORE_MANAGER"],
     },
     {
-        name: "Stock Transfers",
+        label: "Stock Transfers",
         icon: Package,
         href: "/dashboard/stock-transfers",
         color: "text-indigo-400",
-        roles: ["ADMIN", "PRODUCTION_SUPERVISOR", "STORE_MANAGER"],
+        roles: ["ADMIN", "PRODUCTION_SUPERVISOR", "STORE_MANAGER", "BRANCH_MANAGER"],
     },
     {
-        name: "Accounting",
+        label: "Accounting",
         icon: DollarSign,
         href: "/dashboard/accounting",
         color: "text-emerald-400",
-        roles: ["ADMIN", "ACCOUNTANT", "BRANCH_MANAGER"],
+        roles: ["ADMIN", "ACCOUNTANT"],
     },
     {
-        name: "Operator Dashboard",
+        label: "Operator Dashboard",
         href: "/dashboard/operator",
         icon: Wrench,
         color: "text-yellow-400",
         roles: ["ADMIN", "OPERATOR", "PRODUCTION_SUPERVISOR", "BRANCH_MANAGER", "STORE_MANAGER"],
     },
     {
-        name: "Stock",
+        label: "Stock (RM- Raw materials)",
         href: "/dashboard/stock",
         icon: ClipboardList,
         color: "text-teal-400",
         roles: ["ADMIN", "OPERATOR", "PRODUCTION_SUPERVISOR", "BRANCH_MANAGER"],
     },
     {
-        name: "Production Reports",
+        label: "Inventory",
+        href: "/dashboard/inventory",
+        icon: Package,
+        color: "text-blue-400",
+        roles: ["ADMIN", "BRANCH_MANAGER"],
+    },
+    {
+        label: "Production Reports",
         href: "/dashboard/reports/production",
         icon: FileText,
         color: "text-indigo-400",
@@ -180,14 +187,14 @@ const routes = [
         roles: ["ADMIN", "BRANCH_MANAGER"],
     },
     {
-        label: "Sellers",
+        label: "Sellers (RM)",
         icon: Users,
         href: "/dashboard/sellers",
         color: "text-pink-400",
         roles: ["ADMIN", "BRANCH_MANAGER"],
     },
     {
-        label: "Purchases",
+        label: "Purchases (RM)",
         icon: ShoppingCart,
         href: "/dashboard/purchases",
         color: "text-cyan-400",
@@ -215,7 +222,7 @@ const routes = [
         roles: ["ADMIN"],
     },
     {
-        name: "Settings",
+        label: "Settings",
         icon: Settings,
         href: "/dashboard/settings",
         color: "text-gray-400",
@@ -246,10 +253,7 @@ export function Sidebar({ role }: SidebarProps) {
                     </div>
                 </Link>
                 <div className="space-y-1 overflow-y-auto flex-1 pr-2">
-                    {/* DEBUG: Remove after fixing */}
-                    <div className="text-xs text-slate-500 px-3 py-1">
-                        Role: {role || "None"}
-                    </div>
+
                     {filteredRoutes.map((route) => (
                         <Link
                             key={route.href}
@@ -263,7 +267,7 @@ export function Sidebar({ role }: SidebarProps) {
                         >
                             <div className="flex items-center flex-1 relative z-10">
                                 <route.icon className={cn("h-5 w-5 mr-3 transition-transform group-hover:scale-110", route.color)} />
-                                {route.label || route.name}
+                                {route.label}
                             </div>
                             {pathname === route.href && (
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>

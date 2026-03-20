@@ -242,7 +242,8 @@ export async function getAvailableMaterials(stage: ProductionStage, orderId?: st
                 break;
             case ProductionStage.WELDING_INNER:
             case ProductionStage.WELDING_OUTER:
-                categories = ['CONSUMABLE', 'WELDING'];
+            case ProductionStage.PREPARATION:
+                categories = ['CONSUMABLE', 'WELDING', 'RAW_MATERIAL'];
                 break;
             case ProductionStage.PAINTING:
                 categories = ['PAINT', 'POWDER'];

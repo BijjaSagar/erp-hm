@@ -114,17 +114,9 @@ export async function getInvoices() {
     if (!session) return [];
 
     try {
-        const where: any = {};
-
-        // If user is a branch manager, only show invoices for their branch
-        if (session.user.role === "BRANCH_MANAGER" && session.user.branchId) {
-            where.order = {
-                branchId: session.user.branchId
-            };
-        }
-
+        // All authorized roles (ADMIN, BRANCH_MANAGER, ACCOUNTANT) can see ALL invoices
+        // This ensures revenue is visible across roles (admin sees manager's, manager sees admin's)
         const invoices = await prisma.invoice.findMany({
-            where,
             include: {
                 order: {
                     include: {
@@ -227,11 +219,6 @@ export async function getCompletedOrdersWithoutInvoice() {
                 none: {},
             },
         };
-
-        // If user is a branch manager, only show orders for their branch
-        if (session.user.role === "BRANCH_MANAGER" && session.user.branchId) {
-            where.branchId = session.user.branchId;
-        }
 
         const orders = await prisma.order.findMany({
             where,

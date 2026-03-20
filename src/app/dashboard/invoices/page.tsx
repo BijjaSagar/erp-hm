@@ -58,6 +58,7 @@ export default async function InvoicesPage() {
                                 <TableHead>Invoice No.</TableHead>
                                 <TableHead>Order No.</TableHead>
                                 <TableHead>Customer</TableHead>
+                                <TableHead>Branch</TableHead>
                                 <TableHead>Amount</TableHead>
                                 <TableHead>GST</TableHead>
                                 <TableHead>Total</TableHead>
@@ -69,7 +70,7 @@ export default async function InvoicesPage() {
                         <TableBody>
                             {invoices.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={9} className="text-center py-10">
+                                    <TableCell colSpan={10} className="text-center py-10">
                                         <div className="flex flex-col items-center text-muted-foreground">
                                             <FileText className="h-12 w-12 mb-2 opacity-50" />
                                             <p>No invoices found.</p>
@@ -106,6 +107,11 @@ export default async function InvoicesPage() {
                                                         </div>
                                                     )}
                                                 </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="outline" className="bg-slate-50">
+                                                    {invoice.order.branch?.name || 'Main Branch'}
+                                                </Badge>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center">
