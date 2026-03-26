@@ -36,7 +36,7 @@ export default async function StockTransfersPage() {
                         Manage transfers from production to stores
                     </p>
                 </div>
-                {role !== "ADMIN" && (
+                {(role === "BRANCH_MANAGER" || role === "PRODUCTION_SUPERVISOR") && (
                     <Link href="/dashboard/stock-transfers/new">
                         <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
                             <Plus className="h-4 w-4 mr-2" />

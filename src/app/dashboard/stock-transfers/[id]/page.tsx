@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { TransferStatusBadge } from "@/components/transfer-status-badge";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { auth } from "@/auth";
 import {
     ArrowLeft,
     Building2,
@@ -25,14 +26,20 @@ interface TransferDetailsPageProps {
 
 export default async function TransferDetailsPage({ params }: TransferDetailsPageProps) {
     const transfer = await getStockTransferById(params.id);
+    const session = await auth();
+    const role = session?.user?.role;
 
     if (!transfer) {
         notFound();
     }
 
-    const canMarkInTransit = transfer.status === "PENDING";
-    const canReceive = transfer.status === "IN_TRANSIT" || transfer.status === "PENDING";
-    const canCancel = transfer.status === "PENDING" || transfer.status === "IN_TRANSIT";
+    // ADMIN receives transfers; BRANCH_MANAGER/PRODUCTION_SUPERVISOR marks as in-transit
+    const isAdmin = role === "ADMIN";
+    const isProducer = role === "BRANCH_MANAGER" || role === "PRODUCTION_SUPERVISOR";
+
+    const canMarkInTransit = transfer.status === "PENDING" && isProducer;
+    const canReceive = (transfer.status === "IN_TRANSIT" || transfer.status === "PENDING") && isAdmin;
+    const canCancel = (transfer.status === "PENDING" || transfer.status === "IN_TRANSIT") && (isAdmin || isProducer);
 
     return (
         <div className="p-6 space-y-6 fade-in">

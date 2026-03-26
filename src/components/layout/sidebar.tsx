@@ -230,6 +230,28 @@ const routes = [
     },
 ];
 
+const ROLE_LABELS: Record<string, string> = {
+    ADMIN: "Admin",
+    BRANCH_MANAGER: "Branch Manager",
+    OPERATOR: "Operator",
+    PRODUCTION_SUPERVISOR: "Prod. Supervisor",
+    STORE_MANAGER: "Store Manager",
+    ORDER_TAKER: "Order Taker",
+    ACCOUNTANT: "Accountant",
+    MARKETING_HEAD: "Marketing Head",
+};
+
+const ROLE_COLORS: Record<string, string> = {
+    ADMIN: "bg-red-500/20 text-red-300 border-red-500/30",
+    BRANCH_MANAGER: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+    OPERATOR: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
+    PRODUCTION_SUPERVISOR: "bg-green-500/20 text-green-300 border-green-500/30",
+    STORE_MANAGER: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+    ORDER_TAKER: "bg-orange-500/20 text-orange-300 border-orange-500/30",
+    ACCOUNTANT: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+    MARKETING_HEAD: "bg-pink-500/20 text-pink-300 border-pink-500/30",
+};
+
 interface SidebarProps {
     role?: Role;
 }
@@ -241,10 +263,13 @@ export function Sidebar({ role }: SidebarProps) {
         !route.roles || (role && route.roles.includes(role))
     );
 
+    const roleLabel = role ? (ROLE_LABELS[role] || role) : "Unknown";
+    const roleColor = role ? (ROLE_COLORS[role] || "bg-slate-500/20 text-slate-300 border-slate-500/30") : "";
+
     return (
         <div className="space-y-4 py-4 flex flex-col h-full bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-white border-r border-slate-700/50">
             <div className="px-3 py-2 flex-1 flex flex-col overflow-hidden">
-                <Link href="/dashboard" className="flex items-center pl-3 mb-10 group">
+                <Link href="/dashboard" className="flex items-center pl-3 mb-2 group">
                     <div className="relative">
                         <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
                             HM ERP
@@ -252,6 +277,13 @@ export function Sidebar({ role }: SidebarProps) {
                         <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-400 group-hover:w-full transition-all duration-300"></div>
                     </div>
                 </Link>
+                {role && (
+                    <div className="pl-3 mb-6">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${roleColor}`}>
+                            {roleLabel}
+                        </span>
+                    </div>
+                )}
                 <div className="space-y-1 overflow-y-auto flex-1 pr-2">
 
                     {filteredRoutes.map((route) => (

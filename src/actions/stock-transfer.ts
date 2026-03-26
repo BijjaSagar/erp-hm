@@ -187,7 +187,7 @@ export async function receiveStockTransfer(id: string) {
             return { message: "Transfer not found" };
         }
 
-        if (transfer.status !== TransferStatus.PENDING) {
+        if (transfer.status !== TransferStatus.PENDING && transfer.status !== TransferStatus.IN_TRANSIT) {
             return { message: "Transfer already processed" };
         }
 
