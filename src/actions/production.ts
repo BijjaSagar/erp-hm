@@ -6,6 +6,7 @@ import { auth } from "@/auth";
 import { ProductionStage, OrderStatus } from "@prisma/client";
 import { PRODUCTION_STAGES_ORDER } from "@/lib/constants";
 import { reconcileOrderMaterials } from "./material-consumption";
+import { syncOrderInventoryOnCompletion } from "./stock-transfer";
 
 export async function createProductionLog(
     orderId: string,
@@ -143,9 +144,10 @@ export async function updateProductionStage(
             },
         });
 
-        // If order completed, reconcile materials
+        // If order completed, reconcile materials AND sync inventory
         if (stage === ProductionStage.COMPLETED) {
             await reconcileOrderMaterials(orderId);
+            await syncOrderInventoryOnCompletion(orderId);
         }
 
         // Create production log

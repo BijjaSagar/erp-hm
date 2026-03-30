@@ -19,6 +19,13 @@ export async function getRawMaterials() {
                     orderBy: { usedAt: "desc" },
                     take: 5,
                 },
+                allocations: {
+                    where: {
+                        order: {
+                            status: { notIn: ["COMPLETED", "DELIVERED", "CANCELLED"] },
+                        },
+                    },
+                },
             },
             orderBy: { name: "asc" },
         });

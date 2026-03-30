@@ -72,7 +72,7 @@ export async function createStockTransfer(prevState: any, formData: FormData) {
             },
         });
 
-        revalidatePath("/dashboard/stock-transfer");
+        revalidatePath("/dashboard/stock-transfers");
         return { message: "Transfer created successfully", transferNumber };
     } catch (error) {
         console.error("Error creating stock transfer:", error);
@@ -180,7 +180,10 @@ export async function receiveStockTransfer(id: string) {
     try {
         const transfer = await prisma.stockTransfer.findUnique({
             where: { id },
-            include: { items: true },
+            include: {
+                items: true,
+                order: true,
+            },
         });
 
         if (!transfer) {
@@ -201,39 +204,105 @@ export async function receiveStockTransfer(id: string) {
             },
         });
 
-        // Update store inventory
-        for (const item of transfer.items) {
-            await prisma.storeInventory.upsert({
-                where: {
-                    storeId_sku: {
+        // Only add to store inventory if:
+        // - No linked order (manual transfer), OR
+        // - The linked order is fully COMPLETED (all production stages done)
+        const orderIsCompleted = !transfer.order || transfer.order.status === "COMPLETED";
+
+        if (orderIsCompleted) {
+            // Update store inventory
+            for (const item of transfer.items) {
+                await prisma.storeInventory.upsert({
+                    where: {
+                        storeId_sku: {
+                            storeId: transfer.toStoreId,
+                            sku: item.sku,
+                        },
+                    },
+                    update: {
+                        quantity: {
+                            increment: item.quantity,
+                        },
+                    },
+                    create: {
                         storeId: transfer.toStoreId,
+                        productName: item.productName,
                         sku: item.sku,
+                        quantity: item.quantity,
+                        unit: item.unit,
+                        costPrice: 0, // To be set by store manager
+                        sellingPrice: 0, // To be set by store manager
                     },
-                },
-                update: {
-                    quantity: {
-                        increment: item.quantity,
-                    },
-                },
-                create: {
-                    storeId: transfer.toStoreId,
-                    productName: item.productName,
-                    sku: item.sku,
-                    quantity: item.quantity,
-                    unit: item.unit,
-                    costPrice: 0, // To be set by store manager
-                    sellingPrice: 0, // To be set by store manager
-                },
-            });
+                });
+            }
         }
 
-        revalidatePath("/dashboard/stock-transfer");
-        revalidatePath(`/dashboard/stock-transfer/${id}`);
+        revalidatePath("/dashboard/stock-transfers");
+        revalidatePath(`/dashboard/stock-transfers/${id}`);
         revalidatePath(`/dashboard/stores/${transfer.toStoreId}/inventory`);
+        revalidatePath("/dashboard/inventory");
+
+        if (!orderIsCompleted) {
+            return {
+                message: "Transfer received. Items will appear in inventory once all production stages are completed.",
+            };
+        }
+
         return { message: "Transfer received successfully" };
     } catch (error) {
         console.error("Error receiving stock transfer:", error);
         return { message: "Failed to receive stock transfer" };
+    }
+}
+
+/**
+ * Called when an order reaches COMPLETED status.
+ * Syncs all previously RECEIVED transfers for this order into store inventory.
+ * This ensures products only appear in inventory after ALL production stages are done.
+ */
+export async function syncOrderInventoryOnCompletion(orderId: string) {
+    try {
+        // Find all RECEIVED transfers for this order
+        const receivedTransfers = await prisma.stockTransfer.findMany({
+            where: {
+                orderId,
+                status: TransferStatus.RECEIVED,
+            },
+            include: { items: true },
+        });
+
+        for (const transfer of receivedTransfers) {
+            for (const item of transfer.items) {
+                await prisma.storeInventory.upsert({
+                    where: {
+                        storeId_sku: {
+                            storeId: transfer.toStoreId,
+                            sku: item.sku,
+                        },
+                    },
+                    update: {
+                        quantity: {
+                            increment: item.quantity,
+                        },
+                    },
+                    create: {
+                        storeId: transfer.toStoreId,
+                        productName: item.productName,
+                        sku: item.sku,
+                        quantity: item.quantity,
+                        unit: item.unit,
+                        costPrice: 0,
+                        sellingPrice: 0,
+                    },
+                });
+            }
+        }
+
+        revalidatePath("/dashboard/inventory");
+        return { message: "Inventory synced successfully" };
+    } catch (error) {
+        console.error("Error syncing inventory on order completion:", error);
+        return { message: "Failed to sync inventory" };
     }
 }
 
@@ -249,8 +318,8 @@ export async function cancelStockTransfer(id: string) {
             },
         });
 
-        revalidatePath("/dashboard/stock-transfer");
-        revalidatePath(`/dashboard/stock-transfer/${id}`);
+        revalidatePath("/dashboard/stock-transfers");
+        revalidatePath(`/dashboard/stock-transfers/${id}`);
         return { message: "Transfer cancelled successfully" };
     } catch (error) {
         console.error("Error cancelling stock transfer:", error);
@@ -313,12 +382,13 @@ export async function transferFromProduction(
             }
         });
 
-        // Reconcile materials if order reached completion
+        // Reconcile materials and sync inventory if order reached completion
         if (nextStage === ProductionStage.COMPLETED) {
             await reconcileOrderMaterials(orderId);
+            await syncOrderInventoryOnCompletion(orderId);
         }
 
-        revalidatePath("/dashboard/stock-transfer");
+        revalidatePath("/dashboard/stock-transfers");
         revalidatePath(`/dashboard/orders/${orderId}`);
         return { message: "Transfer created successfully", transferNumber };
     } catch (error) {
@@ -482,8 +552,8 @@ export async function updateTransferStatus(id: string, status: TransferStatus) {
             data: { status }
         });
 
-        revalidatePath("/dashboard/stock-transfer");
-        revalidatePath(`/dashboard/stock-transfer/${id}`);
+        revalidatePath("/dashboard/stock-transfers");
+        revalidatePath(`/dashboard/stock-transfers/${id}`);
         return { message: "Status updated successfully" };
     } catch (error) {
         console.error("Error updating transfer status:", error);

@@ -4,11 +4,18 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import OrderApprovalButtons from "./order-approval-buttons";
+import { auth } from "@/auth";
 
-async function getDashboardStats() {
-    // Get total revenue from paid invoices
+async function getDashboardStats(branchId?: string | null) {
+    // Build invoice where clause filtered by branch if available
+    const invoiceWhere: any = { status: "PAID" };
+    if (branchId) {
+        invoiceWhere.order = { branchId };
+    }
+
+    // Get total revenue from paid invoices (branch-scoped)
     const paidInvoices = await prisma.invoice.findMany({
-        where: { status: "PAID" },
+        where: invoiceWhere,
     });
     const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.amount + inv.gstAmount, 0);
 
@@ -76,7 +83,9 @@ const statusColors: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-    const stats = await getDashboardStats();
+    const session = await auth();
+    const branchId = session?.user?.branchId ?? null;
+    const stats = await getDashboardStats(branchId);
 
     return (
         <div className="space-y-8 fade-in">

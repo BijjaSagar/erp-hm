@@ -114,9 +114,31 @@ export async function getInvoices() {
     if (!session) return [];
 
     try {
-        // All authorized roles (ADMIN, BRANCH_MANAGER, ACCOUNTANT) can see ALL invoices
-        // This ensures revenue is visible across roles (admin sees manager's, manager sees admin's)
+        const role = session.user.role;
+        const userId = session.user.id;
+
+        // ACCOUNTANT sees all invoices
+        // ADMIN and BRANCH_MANAGER each see only invoices from their own branch (revenue isolation)
+        let whereClause: any = {};
+
+        if (role === "ADMIN" || role === "BRANCH_MANAGER") {
+            // Use User.branchId to determine the user's home branch
+            const userRecord = await prisma.user.findUnique({
+                where: { id: userId },
+                select: { branchId: true },
+            });
+
+            if (userRecord?.branchId) {
+                whereClause = {
+                    order: {
+                        branchId: userRecord.branchId,
+                    },
+                };
+            }
+        }
+
         const invoices = await prisma.invoice.findMany({
+            where: whereClause,
             include: {
                 order: {
                     include: {

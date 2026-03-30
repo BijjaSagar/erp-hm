@@ -70,11 +70,22 @@ export default async function RawMaterialsPage() {
                                     <p className="font-medium">{material.category}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Current Stock</p>
+                                    <p className="text-sm text-muted-foreground">Current Stock (Available)</p>
                                     <p className="text-2xl font-bold">
                                         {material.quantity} <span className="text-sm font-normal text-muted-foreground">{material.unit}</span>
                                     </p>
                                 </div>
+                                {(() => {
+                                    const allocated = (material as any).allocations?.reduce((sum: number, a: any) => sum + a.quantity, 0) ?? 0;
+                                    return allocated > 0 ? (
+                                        <div className="rounded-md bg-amber-50 border border-amber-200 px-3 py-2">
+                                            <p className="text-xs text-amber-700 font-medium">⚠ Allocated (in active production)</p>
+                                            <p className="text-sm font-semibold text-amber-800">
+                                                {allocated} {material.unit} — will be returned to stock when order(s) complete
+                                            </p>
+                                        </div>
+                                    ) : null;
+                                })()}
                                 {material.reorderLevel && (
                                     <div>
                                         <p className="text-sm text-muted-foreground">Reorder Level</p>
