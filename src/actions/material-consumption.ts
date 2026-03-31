@@ -568,6 +568,19 @@ export async function reconcileOrderMaterials(orderId: string) {
                     },
                 });
 
+                // Add negative allocation to prevent double refund
+                const unit = allocations.find(a => a.materialId === materialId)?.unit || 'units';
+                await prisma.materialAllocation.create({
+                    data: {
+                        orderId,
+                        materialId,
+                        quantity: -leftover,
+                        unit,
+                        allocatedBy: session.user.id!,
+                        notes: "Auto-reconciled unused allocation (Order Completed)",
+                    }
+                });
+
                 results.push({ materialId, leftover, status: "refunded" });
             }
         }
@@ -579,5 +592,77 @@ export async function reconcileOrderMaterials(orderId: string) {
     } catch (error) {
         console.error("Error reconciling materials:", error);
         return { message: "Failed to reconcile materials" };
+    }
+}
+
+/**
+ * Reconcile materials used in a specific completed stage
+ */
+export async function reconcileMaterialsForStage(orderId: string, stage: ProductionStage, userId: string) {
+    try {
+        // 1. Find materials consumed in THIS stage
+        const stageConsumptions = await prisma.materialConsumption.findMany({
+            where: { orderId, stage }
+        });
+        
+        if (stageConsumptions.length === 0) return { success: true, message: "No materials consumed in this stage" };
+
+        const materialIds = Array.from(new Set(stageConsumptions.map(c => c.materialId)));
+
+        // 2. Get all allocations and consumptions for these materials
+        const allocations = await prisma.materialAllocation.findMany({
+            where: { orderId, materialId: { in: materialIds } }
+        });
+        
+        const allConsumptions = await prisma.materialConsumption.findMany({
+            where: { orderId, materialId: { in: materialIds } }
+        });
+        
+        const results = [];
+        for (const materialId of materialIds) {
+            const totalAllocated = allocations.filter(a => a.materialId === materialId).reduce((sum, a) => sum + a.quantity, 0);
+            const totalConsumed = allConsumptions.filter(c => c.materialId === materialId).reduce((sum, c) => sum + c.quantity, 0);
+            
+            const leftover = totalAllocated - totalConsumed;
+            
+            if (leftover > 0) {
+                // Return to stock
+                await prisma.rawMaterial.update({
+                    where: { id: materialId },
+                    data: { quantity: { increment: leftover } }
+                });
+                
+                // Log transaction
+                await prisma.stockTransaction.create({
+                    data: {
+                        itemId: materialId,
+                        quantity: leftover,
+                        type: "IN",
+                        userId,
+                        timestamp: new Date(),
+                    }
+                });
+                
+                // Add negative allocation
+                const unit = allocations.find(a => a.materialId === materialId)?.unit || 'units';
+                await prisma.materialAllocation.create({
+                    data: {
+                        orderId,
+                        materialId,
+                        quantity: -leftover,
+                        unit,
+                        allocatedBy: userId,
+                        notes: `Auto-reconciled unused allocation after ${stage} phase`,
+                    }
+                });
+                
+                results.push({ materialId, leftover, status: "refunded" });
+            }
+        }
+        
+        return { success: true, results };
+    } catch (error) {
+        console.error(`Error reconciling materials for stage ${stage}:`, error);
+        return { success: false, message: "Failed to reconcile stage materials" };
     }
 }
